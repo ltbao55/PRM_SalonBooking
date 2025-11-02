@@ -4,84 +4,160 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="16dp"
-    app:cardCornerRadius="16dp"
-    app:cardElevation="4dp"
-    app:strokeWidth="0dp">
+    android:layout_marginBottom="22dp"
+    app:cardCornerRadius="28dp"
+    app:cardElevation="8dp"
+    app:strokeWidth="1dp"
+    app:strokeColor="@color/beige"
+    app:cardBackgroundColor="@color/card_background_luxury">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Salon Image -->
-        <ImageView
-            android:id="@+id/imgSalon"
+        <!-- Salon Image with Elegant Overlay -->
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:scaleType="centerCrop"
-            android:src="@android:drawable/ic_menu_gallery"
-            tools:ignore="ContentDescription" />
+            android:layout_height="260dp">
 
+            <ImageView
+                android:id="@+id/imgSalon"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@android:drawable/ic_menu_gallery"
+                android:contentDescription="Salon image"
+                tools:ignore="ContentDescription" />
+
+            <!-- Warm Overlay Gradient (Ánh sáng ấm từ đèn chùm) -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/gradient_luxury_salon_card"
+                android:alpha="0.2" />
+
+            <!-- Luxury Premium Badge (Brass Gold Style) -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|end"
+                android:layout_margin="18dp"
+                android:background="@drawable/luxury_badge_background"
+                android:orientation="horizontal"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="PREMIUM"
+                    android:textColor="@color/gold"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.12" />
+
+            </LinearLayout>
+
+        </FrameLayout>
+
+        <!-- Salon Info Section - Cream Beige Background -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:background="@color/card_background_cream"
+            android:padding="22dp">
 
-            <!-- Salon Name -->
+            <!-- Salon Name with Gold Accent -->
             <TextView
                 android:id="@+id/tvSalonName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Tên Salon"
                 android:textColor="@color/text_primary"
-                android:textSize="18sp"
+                android:textSize="22sp"
                 android:textStyle="bold"
-                tools:text="Salon Đẹp" />
+                android:letterSpacing="0.02"
+                tools:text="Salon Luxury Premium" />
 
-            <!-- Address -->
-            <TextView
-                android:id="@+id/tvAddress"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Địa chỉ salon"
-                android:textColor="@color/text_secondary"
-                android:textSize="14sp"
-                android:drawableStart="@android:drawable/ic_menu_mylocation"
-                android:drawablePadding="8dp"
-                android:drawableTint="@color/text_secondary"
-                tools:text="123 Đường ABC, Quận 1, TP.HCM" />
-
-            <!-- Rating & Price (Optional) -->
+            <!-- Address with Gold Brass Accent Line -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:orientation="horizontal">
+                android:layout_marginTop="14dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <!-- Gold Accent Line -->
+                <View
+                    android:layout_width="4dp"
+                    android:layout_height="16dp"
+                    android:background="@color/gold"
+                    android:layout_marginEnd="12dp"
+                    android:elevation="1dp" />
 
                 <TextView
-                    android:id="@+id/tvRating"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="⭐ 4.5"
-                    android:textColor="@color/warning"
-                    android:textSize="14sp"
-                    android:visibility="gone" />
-
-                <View
+                    android:id="@+id/tvAddress"
                     android:layout_width="0dp"
-                    android:layout_height="1dp"
-                    android:layout_weight="1" />
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Địa chỉ salon"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="15sp"
+                    android:maxLines="2"
+                    android:ellipsize="end"
+                    android:lineSpacingMultiplier="1.3"
+                    tools:text="123 Nguyễn Huệ, Quận 1, TP.HCM" />
+
+            </LinearLayout>
+
+            <!-- Elegant Divider with Warm Gold Tint -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="18dp"
+                android:layout_marginBottom="14dp"
+                android:background="@color/beige" />
+
+            <!-- Service Count & Premium Indicator -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
 
                 <TextView
                     android:id="@+id/tvServiceCount"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Dịch vụ cao cấp"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="14sp"
+                    android:drawableStart="@android:drawable/star_on"
+                    android:drawablePadding="10dp"
+                    android:drawableTint="@color/gold" />
+
+                <!-- Premium Indicator - Gold Dots (Brass Style) -->
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="10+ dịch vụ"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="12sp" />
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="●●●"
+                        android:textColor="@color/gold"
+                        android:textSize="12sp"
+                        android:letterSpacing="0.15" />
+
+                </LinearLayout>
 
             </LinearLayout>
 

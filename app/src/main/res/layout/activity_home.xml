@@ -4,138 +4,228 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_light"
+    android:background="@color/background_cream"
     tools:context=".ui.discovery.HomeActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:background="@color/primary"
+        app:elevation="0dp">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/primary"
-            app:title="Salon Booking"
-            app:titleTextColor="@color/white" />
+            android:elevation="8dp"
+            app:title="Luxury Salon"
+            app:titleTextColor="@color/gold"
+            app:navigationIconTint="@color/gold" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:fillViewport="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="20dp">
 
-            <!-- Welcome Section -->
+            <!-- Welcome Section - Luxury Salon Style -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="4dp"
-                app:cardBackgroundColor="@color/primary">
+                android:layout_marginBottom="28dp"
+                app:cardCornerRadius="28dp"
+                app:cardElevation="12dp"
+                app:strokeWidth="0dp"
+                app:cardBackgroundColor="@android:color/transparent">
 
-                <LinearLayout
+                <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="24dp">
+                    android:background="@drawable/gradient_luxury_welcome"
+                    android:padding="36dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Xin chào!"
-                        android:textColor="@color/white"
-                        android:textSize="24sp"
-                        android:textStyle="bold" />
+                        android:orientation="vertical">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:text="Tìm salon phù hợp với bạn"
-                        android:textColor="@color/white"
-                        android:textSize="14sp"
-                        android:alpha="0.9" />
+                        <!-- Chandelier Icon Effect -->
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:layout_marginBottom="12dp">
 
-                </LinearLayout>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="✨"
+                                android:textSize="28sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Chào mừng"
+                                android:textColor="@color/gold"
+                                android:textSize="34sp"
+                                android:textStyle="bold"
+                                android:letterSpacing="0.05"
+                                android:layout_marginStart="8dp" />
+
+                        </LinearLayout>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Khám phá những salon sang trọng hàng đầu"
+                            android:textColor="@color/text_cream"
+                            android:textSize="17sp"
+                            android:alpha="0.98"
+                            android:letterSpacing="0.02"
+                            android:lineSpacingMultiplier="1.2" />
+
+                        <!-- Decorative Line with Gold -->
+                        <View
+                            android:layout_width="70dp"
+                            android:layout_height="4dp"
+                            android:layout_marginTop="20dp"
+                            android:background="@color/gold"
+                            android:elevation="2dp" />
+
+                    </LinearLayout>
+
+                </FrameLayout>
 
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Search Section -->
+            <!-- Search Section - Cream Beige Style -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="2dp">
+                android:layout_marginBottom="28dp"
+                app:cardCornerRadius="22dp"
+                app:cardElevation="6dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="@color/beige"
+                app:cardBackgroundColor="@color/card_background_cream">
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Tìm kiếm salon..."
+                    android:hint="Tìm kiếm salon sang trọng..."
                     app:boxStrokeWidth="0dp"
                     app:boxStrokeWidthFocused="0dp"
                     app:startIconDrawable="@android:drawable/ic_menu_search"
+                    app:startIconTint="@color/gold"
+                    app:hintTextColor="@color/text_secondary"
+                    app:boxBackgroundMode="none"
                     style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/edtSearch"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:padding="16dp" />
+                        android:padding="22dp"
+                        android:textColor="@color/text_primary"
+                        android:textColorHint="@color/text_hint"
+                        android:textSize="16sp" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Section Title -->
-            <TextView
-                android:id="@+id/tvSectionTitle"
-                android:layout_width="wrap_content"
+            <!-- Section Title - Elegant Typography with Gold Accent -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Danh sách Salon"
-                android:textColor="@color/text_primary"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="16dp" />
+                android:layout_marginBottom="22dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <!-- Gold Accent Bar -->
+                <View
+                    android:layout_width="5dp"
+                    android:layout_height="28dp"
+                    android:background="@color/gold"
+                    android:layout_marginEnd="14dp"
+                    android:elevation="2dp" />
+
+                <TextView
+                    android:id="@+id/tvSectionTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Salon Sang Trọng"
+                    android:textColor="@color/text_primary"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.03" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Xem tất cả"
+                    android:textColor="@color/gold"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:paddingStart="14dp"
+                    android:paddingEnd="14dp"
+                    android:paddingTop="6dp"
+                    android:paddingBottom="6dp" />
+
+            </LinearLayout>
 
             <!-- Salon List -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvSalons"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false" />
 
-            <!-- Empty State -->
+            <!-- Empty State - Luxury Style -->
             <LinearLayout
                 android:id="@+id/llEmptyState"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="48dp"
+                android:layout_marginTop="60dp"
                 android:gravity="center"
                 android:orientation="vertical"
                 android:visibility="gone">
 
                 <ImageView
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
+                    android:layout_width="140dp"
+                    android:layout_height="140dp"
                     android:src="@android:drawable/ic_menu_search"
-                    android:tint="@color/text_hint" />
+                    android:tint="@color/gold"
+                    android:alpha="0.25" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="24dp"
                     android:text="Không tìm thấy salon nào"
                     android:textColor="@color/text_secondary"
-                    android:textSize="16sp" />
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Thử tìm kiếm với từ khóa khác"
+                    android:textColor="@color/text_hint"
+                    android:textSize="14sp" />
 
             </LinearLayout>
 

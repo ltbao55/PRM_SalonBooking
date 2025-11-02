@@ -1,25 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Primary Colors - Salon Theme (Elegant Purple/Pink) -->
-    <color name="primary">#6B46C1</color>
-    <color name="primary_dark">#553C9A</color>
-    <color name="primary_light">#8B5CF6</color>
+    <!-- Primary Colors - Luxury Salon Theme (Brass Gold & Soft Brown) -->
+    <!-- Màu nâu nhạt hơn, phù hợp với vàng và kem -->
+    <color name="primary">#6B5240</color>
+    <color name="primary_dark">#5A4535</color>
+    <color name="primary_light">#7A634F</color>
+    <color name="primary_medium">#6B5240</color>
     
-    <!-- Secondary Colors -->
-    <color name="secondary">#EC4899</color>
-    <color name="secondary_dark">#DB2777</color>
-    <color name="secondary_light">#F472B6</color>
+    <!-- Brass Gold - Vàng ánh kim ấm áp (giống đèn chùm) -->
+    <color name="gold">#C9A961</color>
+    <color name="gold_dark">#A88B4F</color>
+    <color name="gold_light">#D4B87A</color>
+    <color name="gold_subtle">#E8D4B0</color>
+    <color name="gold_brass">#B8941F</color>
     
-    <!-- Background Colors -->
+    <!-- Cream & Beige - Màu ghế bọc da -->
+    <color name="cream">#F5F5DC</color>
+    <color name="cream_light">#FFF8E7</color>
+    <color name="cream_warm">#FAF0E6</color>
+    <color name="beige">#E6D5B8</color>
+    <color name="beige_dark">#D4C4A8</color>
+    
+    <!-- Secondary Colors - Soft Brown Tones -->
+    <color name="secondary">#6B5240</color>
+    <color name="secondary_dark">#5A4535</color>
+    <color name="secondary_light">#7A634F</color>
+    
+    <!-- Background Colors - Creamy White & Warm Gray -->
     <color name="background">#FFFFFF</color>
-    <color name="background_light">#F9FAFB</color>
+    <color name="background_light">#FAFAFA</color>
+    <color name="background_cream">#FFF8E7</color>
+    <color name="background_warm">#FAF0E6</color>
     <color name="surface">#FFFFFF</color>
-    <color name="surface_variant">#F3F4F6</color>
+    <color name="surface_variant">#F5F5F5</color>
+    <color name="surface_luxury">#FFF8E7</color>
+    <color name="surface_floor">#F5F5F0</color>
     
     <!-- Text Colors -->
-    <color name="text_primary">#111827</color>
-    <color name="text_secondary">#6B7280</color>
-    <color name="text_hint">#9CA3AF</color>
+    <color name="text_primary">#5A4535</color>
+    <color name="text_secondary">#6B5240</color>
+    <color name="text_hint">#8B7A6B</color>
+    <color name="text_light">#FFFFFF</color>
+    <color name="text_gold">#C9A961</color>
+    <color name="text_cream">#F5F5DC</color>
     
     <!-- Status Colors -->
     <color name="success">#10B981</color>
@@ -28,13 +51,28 @@
     <color name="info">#3B82F6</color>
     
     <!-- Common Colors -->
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
-    <color name="divider">#E5E7EB</color>
+    <color name="black">#5A4535</color>
+    <color name="white">#FFFFFF</color>
+    <color name="divider">#E6D5B8</color>
+    <color name="divider_luxury">#C9A96140</color>
     <color name="card_background">#FFFFFF</color>
-    <color name="shadow">#40000000</color>
+    <color name="card_background_luxury">#FFF8E7</color>
+    <color name="card_background_cream">#FAF0E6</color>
+    <color name="shadow">#6B524030</color>
+    <color name="shadow_luxury">#5A453520</color>
     
-    <!-- Accent Colors -->
-    <color name="accent">#EC4899</color>
-    <color name="accent_light">#FCE7F3</color>
+    <!-- Luxury Accent Colors -->
+    <color name="accent">#C9A961</color>
+    <color name="accent_light">#E8D4B0</color>
+    <color name="accent_dark">#A88B4F</color>
+    
+    <!-- Gradient Colors - Soft Brown to Brass Gold -->
+    <color name="gradient_start">#7A634F</color>
+    <color name="gradient_mid">#6B5240</color>
+    <color name="gradient_end">#5A4535</color>
+    <color name="gradient_gold_tint">#8B7159</color>
+    
+    <!-- Warm Light Colors (Ánh sáng ấm từ đèn chùm) -->
+    <color name="warm_light">#FFF8E7</color>
+    <color name="warm_light_gold">#F5E6D3</color>
 </resources>
