@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.google.services)
+    // Temporarily disabled - uncomment after adding google-services.json from Firebase
+    // alias(libs.plugins.google.services)
 }
 
 android {
