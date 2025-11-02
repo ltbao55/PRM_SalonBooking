@@ -61,7 +61,20 @@
                         android:id="@+id/rvServices"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:minHeight="100dp"
                         android:nestedScrollingEnabled="false" />
+                    
+                    <!-- Empty State for Services -->
+                    <TextView
+                        android:id="@+id/tvServicesEmpty"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Chưa có dịch vụ nào"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="14sp"
+                        android:gravity="center"
+                        android:padding="16dp"
+                        android:visibility="gone" />
 
                 </LinearLayout>
 
@@ -94,7 +107,20 @@
                         android:id="@+id/rvStylists"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:minHeight="100dp"
                         android:nestedScrollingEnabled="false" />
+                    
+                    <!-- Empty State for Stylists -->
+                    <TextView
+                        android:id="@+id/tvStylistsEmpty"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Chưa có stylist nào (Tùy chọn)"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="14sp"
+                        android:gravity="center"
+                        android:padding="16dp"
+                        android:visibility="gone" />
 
                 </LinearLayout>
 

@@ -19,7 +19,8 @@
             android:background="@color/primary"
             app:title="Chỉnh sửa hồ sơ"
             app:titleTextColor="@color/white"
-            app:navigationIcon="@android:drawable/ic_menu_revert" />
+            app:navigationIcon="@android:drawable/ic_menu_revert"
+            app:navigationIconTint="@color/white" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

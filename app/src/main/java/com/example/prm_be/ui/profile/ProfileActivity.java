@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -66,10 +67,36 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void loadUserData() {
-        // TODO: Load user data from FirebaseRepo
-        // if (repo.isUserLoggedIn()) {
-        //     String uid = repo.getCurrentUser().getUid();
-        //     repo.getUser(uid, new FirebaseRepo.FirebaseCallback<User>() {...});
-        // }
+        if (!repo.isUserLoggedIn()) {
+            Toast.makeText(this, "Vui lòng đăng nhập", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
+        String uid = repo.getCurrentUser().getUid();
+        repo.getUser(uid, new FirebaseRepo.FirebaseCallback<com.example.prm_be.data.models.User>() {
+            @Override
+            public void onSuccess(com.example.prm_be.data.models.User user) {
+                if (user != null) {
+                    tvName.setText(user.getName());
+                    tvEmail.setText(user.getEmail());
+                    
+                    // Load avatar image if available
+                    if (user.getAvatarUrl() != null && !user.getAvatarUrl().isEmpty()) {
+                        // TODO: Load image from URL using Glide or Picasso
+                        // For now, just show placeholder
+                        imgAvatar.setImageResource(android.R.drawable.ic_menu_myplaces);
+                    } else {
+                        imgAvatar.setImageResource(android.R.drawable.ic_menu_myplaces);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Toast.makeText(ProfileActivity.this, 
+                    "Không thể tải thông tin người dùng: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
