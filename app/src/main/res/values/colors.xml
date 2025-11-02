@@ -1,5 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Primary Colors - Salon Theme (Elegant Purple/Pink) -->
+    <color name="primary">#6B46C1</color>
+    <color name="primary_dark">#553C9A</color>
+    <color name="primary_light">#8B5CF6</color>
+    
+    <!-- Secondary Colors -->
+    <color name="secondary">#EC4899</color>
+    <color name="secondary_dark">#DB2777</color>
+    <color name="secondary_light">#F472B6</color>
+    
+    <!-- Background Colors -->
+    <color name="background">#FFFFFF</color>
+    <color name="background_light">#F9FAFB</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="surface_variant">#F3F4F6</color>
+    
+    <!-- Text Colors -->
+    <color name="text_primary">#111827</color>
+    <color name="text_secondary">#6B7280</color>
+    <color name="text_hint">#9CA3AF</color>
+    
+    <!-- Status Colors -->
+    <color name="success">#10B981</color>
+    <color name="error">#EF4444</color>
+    <color name="warning">#F59E0B</color>
+    <color name="info">#3B82F6</color>
+    
+    <!-- Common Colors -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="divider">#E5E7EB</color>
+    <color name="card_background">#FFFFFF</color>
+    <color name="shadow">#40000000</color>
+    
+    <!-- Accent Colors -->
+    <color name="accent">#EC4899</color>
+    <color name="accent_light">#FCE7F3</color>
 </resources>

@@ -55,8 +55,15 @@ public class FirebaseRepo {
      * Constructor private để đảm bảo Singleton pattern
      */
     private FirebaseRepo() {
-        auth = FirebaseAuth.getInstance();
-        firestore = FirebaseFirestore.getInstance();
+        try {
+            auth = FirebaseAuth.getInstance();
+            firestore = FirebaseFirestore.getInstance();
+        } catch (Exception e) {
+            Log.e(TAG, "Firebase initialization failed. Make sure google-services.json is added.", e);
+            // Firebase chưa được setup - sẽ trả về null khi gọi methods
+            auth = null;
+            firestore = null;
+        }
     }
     
     /**
@@ -140,13 +147,18 @@ public class FirebaseRepo {
      * Đăng xuất
      */
     public void logout() {
-        auth.signOut();
+        if (auth != null) {
+            auth.signOut();
+        }
     }
     
     /**
      * Lấy user hiện tại đã đăng nhập
      */
     public FirebaseUser getCurrentUser() {
+        if (auth == null) {
+            return null; // Firebase chưa được setup
+        }
         return auth.getCurrentUser();
     }
     
@@ -154,6 +166,9 @@ public class FirebaseRepo {
      * Kiểm tra xem có user đang đăng nhập không
      */
     public boolean isUserLoggedIn() {
+        if (auth == null) {
+            return false; // Firebase chưa được setup
+        }
         return auth.getCurrentUser() != null;
     }
     

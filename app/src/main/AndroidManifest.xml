@@ -11,15 +11,60 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.PRM_BE">
+        
+        <!-- Splash Screen - Launcher Activity -->
         <activity
-            android:name=".MainActivity"
-            android:exported="true">
+            android:name=".ui.auth.SplashActivity"
+            android:exported="true"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Authentication Activities -->
+        <activity
+            android:name=".ui.auth.LoginActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.auth.RegisterActivity"
+            android:exported="false" />
+
+        <!-- Discovery Activities -->
+        <activity
+            android:name=".ui.discovery.HomeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.discovery.SalonListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.discovery.SalonDetailActivity"
+            android:exported="false" />
+
+        <!-- Booking Activities -->
+        <activity
+            android:name=".ui.booking.BookingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.booking.BookingSuccessActivity"
+            android:exported="false" />
+
+        <!-- Profile Activities -->
+        <activity
+            android:name=".ui.profile.ProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.profile.EditProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.profile.BookingHistoryActivity"
+            android:exported="false" />
+
+        <!-- MainActivity (kept for backward compatibility, can be removed later) -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="false" />
     </application>
 
 </manifest>
