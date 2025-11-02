@@ -11,15 +11,47 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.PRM_BE">
+        
+        <!-- Splash Activity - Màn hình đầu tiên -->
         <activity
-            android:name=".MainActivity"
-            android:exported="true">
+            android:name=".ui.auth.SplashActivity"
+            android:exported="true"
+            android:theme="@style/Theme.PRM_BE">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        
+        <!-- Login Activity -->
+        <activity
+            android:name=".ui.auth.LoginActivity"
+            android:exported="false"
+            android:theme="@style/Theme.PRM_BE" />
+        
+        <!-- Register Activity -->
+        <activity
+            android:name=".ui.auth.RegisterActivity"
+            android:exported="false"
+            android:theme="@style/Theme.PRM_BE" />
+        
+        <!-- Forgot Password Activity -->
+        <activity
+            android:name=".ui.auth.ForgotPasswordActivity"
+            android:exported="false"
+            android:theme="@style/Theme.PRM_BE" />
+        
+        <!-- Home Activity - Màn hình chính sau khi đăng nhập -->
+        <activity
+            android:name=".ui.home.HomeActivity"
+            android:exported="false"
+            android:theme="@style/Theme.PRM_BE" />
+        
+        <!-- Main Activity (tạm thời, sẽ được thay bằng HomeActivity sau) -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="false"
+            android:theme="@style/Theme.PRM_BE" />
     </application>
 
 </manifest>

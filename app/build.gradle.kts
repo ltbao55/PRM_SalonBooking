@@ -45,6 +45,9 @@ dependencies {
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.storage)
     
+    // Google Sign-In
+    implementation(libs.googleSignIn)
+    
     // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

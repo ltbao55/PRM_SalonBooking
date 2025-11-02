@@ -26,31 +26,30 @@
 
 ## 🚀 Bắt Đầu
 
+### ⭐ **Cho Dev Mới: Đọc [SETUP_GUIDE.md](SETUP_GUIDE.md) Trước!**
+
 ### Yêu cầu
 - Android Studio (Arctic Fox trở lên)
 - JDK 11
 - Android SDK 33+
 
-### Cài đặt
+### Cài đặt nhanh
 
 1. **Clone repository**
 ```bash
 git clone <repository-url>
-cd PRM_BE
+cd PRM_SalonBooking
 ```
 
-2. **Thiết lập Firebase** (Xem [FIREBASE_SETUP.md](FIREBASE_SETUP.md))
-   - Tạo Firebase Project
-   - Tải file `google-services.json`
-   - Đặt vào `app/google-services.json`
-   - Bật Firebase Authentication và Firestore
+2. **Thiết lập Firebase** 
+   - Xem chi tiết: **[SETUP_GUIDE.md](SETUP_GUIDE.md)**
+   - Tải file `google-services.json` và đặt vào `app/google-services.json`
+   - Firebase đã được setup sẵn bởi Dev 1
 
-3. **Sync Gradle**
-   - Android Studio sẽ tự động sync
-   - Hoặc: File → Sync Project with Gradle Files
-
-4. **Build và chạy**
-   - Click Run hoặc `Shift + F10`
+3. **Sync Gradle & Build**
+   - File → Sync Project with Gradle Files
+   - Build → Make Project
+   - Run app
 
 ## 📦 Cấu Trúc Dự Án
 
@@ -108,12 +107,11 @@ app/src/main/java/com/example/prm_be/
 
 - **KHÔNG commit `google-services.json`** vào Git (đã thêm vào .gitignore)
 - Mỗi dev cần tải `google-services.json` riêng từ Firebase Console
-- Xem [FIREBASE_SETUP.md](FIREBASE_SETUP.md) để biết cách thiết lập Firebase
 
 ## 📚 Tài Liệu
 
-- [FIREBASE_SETUP.md](FIREBASE_SETUP.md) - Hướng dẫn thiết lập Firebase
-- [claude.md](claude.md) - Context và ghi chú dự án
+- **[SETUP_GUIDE.md](SETUP_GUIDE.md)** - ⭐ **Hướng dẫn setup cho team (ĐỌC FILE NÀY ĐẦU TIÊN)**
+- [instrucition.md](instrucition.md) - Yêu cầu và phân công công việc
 
 ---
 
