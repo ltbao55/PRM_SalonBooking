@@ -14,9 +14,11 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -136,6 +138,86 @@ public class FirebaseRepo {
                         } else {
                             callback.onFailure(new Exception("User is null"));
                         }
+                    } else {
+                        callback.onFailure(task.getException());
+                    }
+                }
+            });
+    }
+    
+    /**
+     * Đăng nhập với Google
+     * @param idToken ID token từ Google Sign-In
+     * @param callback Callback để xử lý kết quả
+     */
+    public void signInWithGoogle(String idToken, FirebaseCallback<FirebaseUser> callback) {
+        AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
+        auth.signInWithCredential(credential)
+            .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    if (task.isSuccessful()) {
+                        FirebaseUser firebaseUser = auth.getCurrentUser();
+                        if (firebaseUser != null) {
+                            // Kiểm tra xem user đã có trong Firestore chưa
+                            getUser(firebaseUser.getUid(), new FirebaseCallback<User>() {
+                                @Override
+                                public void onSuccess(User user) {
+                                    // User đã tồn tại trong Firestore
+                                    callback.onSuccess(firebaseUser);
+                                }
+                                
+                                @Override
+                                public void onFailure(Exception e) {
+                                    // User chưa có trong Firestore, tạo mới
+                                    String name = firebaseUser.getDisplayName() != null 
+                                            ? firebaseUser.getDisplayName() 
+                                            : "User";
+                                    String email = firebaseUser.getEmail() != null 
+                                            ? firebaseUser.getEmail() 
+                                            : "";
+                                    String avatarUrl = firebaseUser.getPhotoUrl() != null 
+                                            ? firebaseUser.getPhotoUrl().toString() 
+                                            : null;
+                                    
+                                    User newUser = new User(firebaseUser.getUid(), name, email, avatarUrl);
+                                    createUser(newUser, new FirebaseCallback<Void>() {
+                                        @Override
+                                        public void onSuccess(Void result) {
+                                            callback.onSuccess(firebaseUser);
+                                        }
+                                        
+                                        @Override
+                                        public void onFailure(Exception e) {
+                                            Log.e(TAG, "Error creating user document", e);
+                                            // Vẫn trả về success vì user đã được tạo trong Auth
+                                            callback.onSuccess(firebaseUser);
+                                        }
+                                    });
+                                }
+                            });
+                        } else {
+                            callback.onFailure(new Exception("User is null"));
+                        }
+                    } else {
+                        callback.onFailure(task.getException());
+                    }
+                }
+            });
+    }
+    
+    /**
+     * Gửi email reset mật khẩu
+     * @param email Email người dùng
+     * @param callback Callback để xử lý kết quả
+     */
+    public void sendPasswordResetEmail(String email, FirebaseCallback<Void> callback) {
+        auth.sendPasswordResetEmail(email)
+            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()) {
+                        callback.onSuccess(null);
                     } else {
                         callback.onFailure(task.getException());
                     }
