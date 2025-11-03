@@ -31,7 +31,7 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
+        setContentView(R.layout.activity_home_test);
 
         rootView = findViewById(android.R.id.content);
         
@@ -116,7 +116,7 @@ public class HomeActivity extends AppCompatActivity {
 
     private void showSuccessMessage(String message) {
         Snackbar snackbar = Snackbar.make(rootView, message, Snackbar.LENGTH_SHORT);
-        snackbar.setBackgroundTint(getResources().getColor(R.color.success_color, null));
+        snackbar.setBackgroundTint(getResources().getColor(R.color.success, null));
         snackbar.setTextColor(getResources().getColor(android.R.color.white, null));
         snackbar.show();
     }

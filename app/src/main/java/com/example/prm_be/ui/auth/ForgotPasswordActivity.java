@@ -169,7 +169,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
      */
     private void showSuccessMessage(String message) {
         Snackbar snackbar = Snackbar.make(rootView, message, Snackbar.LENGTH_LONG);
-        snackbar.setBackgroundTint(getResources().getColor(R.color.success_color, null));
+        snackbar.setBackgroundTint(getResources().getColor(R.color.success, null));
         snackbar.setTextColor(getResources().getColor(android.R.color.white, null));
         snackbar.show();
     }
@@ -179,7 +179,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
      */
     private void showErrorMessage(String message) {
         Snackbar snackbar = Snackbar.make(rootView, message, Snackbar.LENGTH_LONG);
-        snackbar.setBackgroundTint(getResources().getColor(R.color.error_color, null));
+        snackbar.setBackgroundTint(getResources().getColor(R.color.error, null));
         snackbar.setTextColor(getResources().getColor(android.R.color.white, null));
         snackbar.show();
     }
