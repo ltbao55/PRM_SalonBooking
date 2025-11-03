@@ -50,6 +50,10 @@ public class TimeSlotAdapter extends RecyclerView.Adapter<TimeSlotAdapter.TimeSl
         public boolean isAvailable() {
             return isAvailable;
         }
+
+        public void setAvailable(boolean available) {
+            this.isAvailable = available;
+        }
     }
 
     public TimeSlotAdapter() {
@@ -68,9 +72,9 @@ public class TimeSlotAdapter extends RecyclerView.Adapter<TimeSlotAdapter.TimeSl
         // Update availability
         for (int i = 0; i < timeSlotList.size(); i++) {
             TimeSlot slot = timeSlotList.get(i);
-            boolean wasAvailable = slot.isAvailable;
-            slot.isAvailable = !this.bookedSlots.contains(slot.getTime());
-            if (wasAvailable != slot.isAvailable) {
+            boolean wasAvailable = slot.isAvailable();
+            slot.setAvailable(!this.bookedSlots.contains(slot.getTime()));
+            if (wasAvailable != slot.isAvailable()) {
                 notifyItemChanged(i);
             }
         }

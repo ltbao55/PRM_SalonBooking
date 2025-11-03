@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -31,6 +32,7 @@ public class HomeActivity extends AppCompatActivity {
     private RecyclerView rvSalons;
     private TextInputEditText edtSearch;
     private LinearLayout llEmptyState;
+    private TextView tvViewAll;
     private SalonAdapter salonAdapter;
     private List<Salon> originalSalonList; // Danh sách gốc (để filter)
     private List<Salon> displayedSalonList; // Danh sách hiển thị
@@ -44,7 +46,18 @@ public class HomeActivity extends AppCompatActivity {
         setupToolbar();
         setupRecyclerView();
         setupSearchView();
+        setupViewAllButton();
         loadMockData(); // Tạm thời dùng mock data để preview UI
+    }
+    
+    private void setupViewAllButton() {
+        // Setup click listener cho "Xem tất cả"
+        if (tvViewAll != null) {
+            tvViewAll.setOnClickListener(v -> {
+                Intent intent = new Intent(HomeActivity.this, SalonListActivity.class);
+                startActivity(intent);
+            });
+        }
     }
 
     private void initViews() {
@@ -52,6 +65,7 @@ public class HomeActivity extends AppCompatActivity {
         rvSalons = findViewById(R.id.rvSalons);
         edtSearch = findViewById(R.id.edtSearch);
         llEmptyState = findViewById(R.id.llEmptyState);
+        tvViewAll = findViewById(R.id.tvViewAll);
     }
 
     private void setupToolbar() {
@@ -75,6 +89,21 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void setupSearchView() {
+        // Click vào search box để navigate đến SalonListActivity
+        edtSearch.setOnClickListener(v -> {
+            Intent intent = new Intent(HomeActivity.this, SalonListActivity.class);
+            startActivity(intent);
+        });
+        
+        // Focus vào search box cũng navigate
+        edtSearch.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus) {
+                Intent intent = new Intent(HomeActivity.this, SalonListActivity.class);
+                startActivity(intent);
+                edtSearch.clearFocus();
+            }
+        });
+        
         edtSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {

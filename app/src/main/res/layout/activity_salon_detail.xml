@@ -4,14 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_light"
+    android:background="@color/background_cream"
     tools:context=".ui.discovery.SalonDetailActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        android:layout_height="350dp"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:background="@color/primary">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/collapsingToolbar"
@@ -20,22 +21,66 @@
             app:contentScrim="@color/primary"
             app:expandedTitleMarginEnd="64dp"
             app:expandedTitleMarginStart="48dp"
+            app:expandedTitleTextColor="@color/gold"
+            app:collapsedTitleTextColor="@color/gold"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
-            <ImageView
-                android:id="@+id/imgSalon"
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                android:src="@android:drawable/ic_menu_gallery"
-                app:layout_collapseMode="parallax" />
+                android:layout_height="match_parent">
+
+                <!-- Salon Image -->
+                <ImageView
+                    android:id="@+id/imgSalon"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:src="@android:drawable/ic_menu_gallery"
+                    app:layout_collapseMode="parallax"
+                    tools:ignore="ContentDescription" />
+
+                <!-- Elegant Overlay Gradient -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/gradient_luxury_salon_card"
+                    android:alpha="0.3" />
+
+                <!-- Premium Badge -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top|end"
+                    android:layout_margin="20dp"
+                    android:background="@drawable/luxury_badge_background"
+                    android:orientation="horizontal"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="PREMIUM"
+                        android:textColor="@color/gold"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.15" />
+
+                </LinearLayout>
+
+            </FrameLayout>
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
+                android:background="@android:color/transparent"
                 app:layout_collapseMode="pin"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+                app:navigationIconTint="@color/gold"
+                app:titleTextColor="@color/gold" />
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
@@ -44,107 +89,182 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:fillViewport="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="20dp">
 
-            <!-- Salon Info Card -->
+            <!-- Salon Info Card - Luxury Style -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="2dp">
+                android:layout_marginBottom="24dp"
+                app:cardCornerRadius="28dp"
+                app:cardElevation="8dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="@color/beige"
+                app:cardBackgroundColor="@color/card_background_luxury">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="24dp">
 
-                    <TextView
-                        android:id="@+id/tvSalonName"
-                        android:layout_width="wrap_content"
+                    <!-- Salon Name -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Tên Salon"
-                        android:textColor="@color/text_primary"
-                        android:textSize="24sp"
-                        android:textStyle="bold"
-                        tools:text="Salon Đẹp" />
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
 
-                    <TextView
-                        android:id="@+id/tvSalonAddress"
-                        android:layout_width="wrap_content"
+                        <View
+                            android:layout_width="4dp"
+                            android:layout_height="32dp"
+                            android:background="@color/gold"
+                            android:layout_marginEnd="14dp" />
+
+                        <TextView
+                            android:id="@+id/tvSalonName"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Tên Salon"
+                            android:textColor="@color/text_primary"
+                            android:textSize="26sp"
+                            android:textStyle="bold"
+                            android:letterSpacing="0.02"
+                            tools:text="Salon Luxury Premium" />
+
+                    </LinearLayout>
+
+                    <!-- Address with Gold Accent -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="Địa chỉ salon"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="14sp"
-                        android:drawableStart="@android:drawable/ic_menu_mylocation"
-                        android:drawablePadding="8dp"
-                        android:drawableTint="@color/text_secondary"
-                        tools:text="123 Đường ABC, Quận 1, TP.HCM" />
+                        android:layout_marginTop="16dp"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <View
+                            android:layout_width="3dp"
+                            android:layout_height="16dp"
+                            android:background="@color/gold"
+                            android:layout_marginEnd="12dp" />
+
+                        <TextView
+                            android:id="@+id/tvSalonAddress"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Địa chỉ salon"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="16sp"
+                            android:maxLines="3"
+                            android:ellipsize="end"
+                            android:lineSpacingMultiplier="1.3"
+                            tools:text="123 Nguyễn Huệ, Quận 1, TP.HCM" />
+
+                    </LinearLayout>
 
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Services Section -->
-            <TextView
-                android:layout_width="wrap_content"
+            <!-- Services Section Header -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:text="Dịch vụ"
-                android:textColor="@color/text_primary"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:layout_marginBottom="18dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
 
+                <View
+                    android:layout_width="5dp"
+                    android:layout_height="28dp"
+                    android:background="@color/gold"
+                    android:layout_marginEnd="14dp" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Dịch Vụ"
+                    android:textColor="@color/text_primary"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.03" />
+
+            </LinearLayout>
+
+            <!-- Services RecyclerView -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvServices"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
+                android:layout_marginBottom="32dp"
                 android:nestedScrollingEnabled="false" />
 
-            <!-- Stylists Section -->
-            <TextView
-                android:layout_width="wrap_content"
+            <!-- Stylists Section Header -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:text="Stylist"
-                android:textColor="@color/text_primary"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:layout_marginBottom="18dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
 
+                <View
+                    android:layout_width="5dp"
+                    android:layout_height="28dp"
+                    android:background="@color/gold"
+                    android:layout_marginEnd="14dp" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Stylist"
+                    android:textColor="@color/text_primary"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.03" />
+
+            </LinearLayout>
+
+            <!-- Stylists RecyclerView -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvStylists"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
+                android:layout_marginBottom="32dp"
                 android:nestedScrollingEnabled="false" />
 
             <!-- Bottom Spacer for FAB -->
             <View
                 android:layout_width="match_parent"
-                android:layout_height="80dp" />
+                android:layout_height="90dp" />
 
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
 
-    <!-- Floating Action Button -->
+    <!-- Floating Action Button - Luxury Style -->
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/btnBook"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
-        android:text="Đặt Lịch"
+        android:layout_margin="20dp"
+        android:text="Đặt Lịch Ngay"
+        android:textColor="@color/text_primary"
+        android:backgroundTint="@color/gold"
         app:icon="@android:drawable/ic_menu_add"
-        app:iconTint="@color/white" />
+        app:iconTint="@color/text_primary"
+        app:elevation="8dp"
+        app:cornerRadius="28dp" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -7,43 +7,142 @@
     android:background="@drawable/splash_background"
     tools:context=".ui.auth.SplashActivity">
 
-    <ImageView
-        android:id="@+id/imgLogo"
+    <!-- Decorative Gold Elements -->
+    <View
+        android:id="@+id/viewGoldAccent1"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:background="@drawable/gradient_luxury_welcome"
+        android:alpha="0.15"
+        android:rotation="45"
+        app:layout_constraintBottom_toTopOf="@+id/viewLogoContainer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.2" />
+
+    <View
+        android:id="@+id/viewGoldAccent2"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:background="@drawable/gradient_luxury_welcome"
+        android:alpha="0.1"
+        android:rotation="-30"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/viewGoldAccent3"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvTagline"
+        app:layout_constraintVertical_bias="0.6" />
+
+    <View
+        android:id="@+id/viewGoldAccent3"
         android:layout_width="120dp"
         android:layout_height="120dp"
-        android:src="@android:drawable/ic_menu_view"
-        android:tint="@color/white"
+        android:background="@drawable/gradient_luxury_welcome"
+        android:alpha="0.1"
+        android:rotation="60"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/viewGoldAccent2"
+        app:layout_constraintTop_toBottomOf="@+id/tvTagline"
+        app:layout_constraintVertical_bias="0.5" />
+
+    <!-- Logo Container -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/viewLogoContainer"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:background="@drawable/splash_logo_background"
         app:layout_constraintBottom_toTopOf="@+id/tvAppName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="120dp" />
+        app:layout_constraintVertical_bias="0.45">
 
+        <!-- Logo Icon -->
+        <ImageView
+            android:id="@+id/imgLogo"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@android:drawable/star_big_on"
+            android:tint="@color/gold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Gold Ring Decoration -->
+        <View
+            android:layout_width="140dp"
+            android:layout_height="140dp"
+            android:background="@drawable/gold_ring_background"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- App Name -->
     <TextView
         android:id="@+id/tvAppName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Salon Booking"
-        android:textColor="@color/white"
-        android:textSize="32sp"
+        android:text="Luxury Salon"
+        android:textColor="@color/gold"
+        android:textSize="42sp"
         android:textStyle="bold"
-        android:letterSpacing="0.1"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:letterSpacing="0.08"
+        android:shadowColor="@color/primary_dark"
+        android:shadowDx="2"
+        android:shadowDy="2"
+        android:shadowRadius="4"
+        app:layout_constraintBottom_toTopOf="@+id/tvTagline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imgLogo"
-        android:layout_marginTop="24dp"
-        android:layout_marginBottom="120dp" />
+        app:layout_constraintTop_toBottomOf="@+id/viewLogoContainer"
+        android:layout_marginTop="32dp" />
 
-    <ProgressBar
-        android:id="@+id/progressBar"
+    <!-- Tagline -->
+    <TextView
+        android:id="@+id/tvTagline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:indeterminateTint="@color/white"
+        android:text="Trải nghiệm dịch vụ sang trọng"
+        android:textColor="@color/text_cream"
+        android:textSize="16sp"
+        android:alpha="0.9"
+        android:letterSpacing="0.03"
+        app:layout_constraintBottom_toTopOf="@+id/progressBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvAppName"
+        android:layout_marginTop="16dp" />
+
+    <!-- Loading ProgressBar -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:indeterminateTint="@color/gold"
         android:visibility="visible"
+        android:scaleX="1.2"
+        android:scaleY="1.2"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginBottom="60dp" />
+        android:layout_marginBottom="80dp" />
+
+    <!-- Bottom Decorative Line -->
+    <View
+        android:id="@+id/viewBottomLine"
+        android:layout_width="100dp"
+        android:layout_height="3dp"
+        android:background="@color/gold"
+        android:elevation="2dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginBottom="40dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -14,48 +14,52 @@
 ### 📱 Màn Hình Phụ Trách (6 màn hình)
 
 #### 🔐 Module Authentication (3 màn hình)
-1. **SplashActivity** ✅
+1. **SplashActivity** ✅ (Hoàn thành)
    - File: `ui/auth/SplashActivity.java`
    - Layout: `activity_splash.xml`
    - Logic: Kiểm tra đăng nhập → chuyển Login hoặc Home
+   - UI: Luxury salon style với animations
 
-2. **LoginActivity** ⚠️ (Cần hoàn thiện)
+2. **LoginActivity** ✅ (UI hoàn chỉnh, chưa có BE)
    - File: `ui/auth/LoginActivity.java`
    - Layout: `activity_login.xml`
-   - Logic: Đăng nhập với FirebaseRepo, validate input
+   - Logic: Validate input ✅ (Chưa có Firebase login - TODO)
+   - UI: Luxury salon style ✅
 
-3. **RegisterActivity** ⚠️ (Cần hoàn thiện)
+3. **RegisterActivity** ✅ (UI hoàn chỉnh, chưa có BE)
    - File: `ui/auth/RegisterActivity.java`
    - Layout: `activity_register.xml`
-   - Logic: Đăng ký với FirebaseRepo, validate input
+   - Logic: Validate input ✅ (Chưa có Firebase register - TODO)
+   - UI: Luxury salon style ✅
 
 #### 🔍 Module Discovery (3 màn hình)
-4. **HomeActivity** ⚠️ (Cần hoàn thiện)
+4. **HomeActivity** ✅ (UI hoàn chỉnh, chưa có BE)
    - File: `ui/discovery/HomeActivity.java`
    - Layout: `activity_home.xml`
    - Logic: 
-     - Hiển thị danh sách salon (RecyclerView)
-     - Tìm kiếm salon
-     - Navigation đến SalonList, SalonDetail, Profile
+     - Hiển thị danh sách salon (RecyclerView) ✅
+     - Search UI và navigation ✅ (Filter local, chưa có BE search)
+     - Navigation đến SalonList, SalonDetail, Profile ✅
+   - Adapter: `SalonAdapter.java` ✅
    - **Lưu ý**: Intent đến ProfileActivity (do Dev 2) chỉ cần đúng tên class, không cần chỉnh sửa ProfileActivity
 
-5. **SalonListActivity** ⚠️ (Cần hoàn thiện)
+5. **SalonListActivity** ✅ (UI hoàn chỉnh, chưa có BE)
    - File: `ui/discovery/SalonListActivity.java`
    - Layout: `activity_salon_list.xml`
    - Logic:
-     - Load danh sách salon từ FirebaseRepo
-     - Search/Filter salon
-     - Navigation đến SalonDetailActivity
-   - Adapter: `SalonAdapter.java` (nếu cần)
+     - List salon với RecyclerView ✅ (Dùng mock data)
+     - Search/Filter salon local ✅ (Chưa có BE search)
+     - Navigation đến SalonDetailActivity ✅
+   - Adapter: `SalonAdapter.java` ✅ (tái sử dụng từ HomeActivity)
 
-6. **SalonDetailActivity** ⚠️ (Cần hoàn thiện)
+6. **SalonDetailActivity** ✅ (UI hoàn chỉnh, chưa có BE)
    - File: `ui/discovery/SalonDetailActivity.java`
    - Layout: `activity_salon_detail.xml`
    - Logic:
-     - Hiển thị thông tin salon (tên, địa chỉ, ảnh)
-     - Load services và stylists (RecyclerView)
-     - Button "Đặt lịch" → Intent đến BookingActivity (do Dev 2)
-   - Adapters: `ServiceAdapter.java`, `StylistAdapter.java` (nếu cần)
+     - Hiển thị thông tin salon (tên, địa chỉ, ảnh) ✅
+     - Load services và stylists (RecyclerView) ✅ (Dùng mock data)
+     - Button "Đặt lịch" → Intent đến BookingActivity ✅
+   - Adapters: `ServiceDetailAdapter.java`, `StylistDetailAdapter.java` ✅
    - **Lưu ý**: Intent đến BookingActivity chỉ cần truyền `EXTRA_SALON_ID`, không chỉnh sửa BookingActivity
 
 ### 🎨 Layout Files Cần Tạo/Hoàn Thiện
@@ -240,13 +244,15 @@ git pull origin main
 ## 📊 Checklist Hoàn Thành
 
 ### Dev 1 Checklist
-- [ ] SplashActivity: Logic check đăng nhập
-- [ ] LoginActivity: Validate, login với Firebase
-- [ ] RegisterActivity: Validate, register với Firebase
-- [ ] HomeActivity: RecyclerView salon, search, navigation
-- [ ] SalonListActivity: List salon, search/filter
-- [ ] SalonDetailActivity: Hiển thị salon, services, stylists
-- [ ] Layouts: Tất cả XML layouts cho 6 màn hình
+- [x] SplashActivity: Logic check đăng nhập ✅ (Đã hoàn thành với UI luxury + animations)
+- [x] LoginActivity: Validate input, UI hoàn chỉnh ✅ (Chưa có BE - cần implement Firebase login sau)
+- [x] RegisterActivity: Validate input, UI hoàn chỉnh ✅ (Chưa có BE - cần implement Firebase register sau)
+- [x] HomeActivity: RecyclerView salon, search UI, navigation ✅ (Dùng mock data, search local filter)
+- [x] SalonListActivity: List salon, search/filter local ✅ (Dùng mock data, filter local)
+- [x] SalonDetailActivity: Hiển thị salon, services, stylists ✅ (Dùng mock data, có adapters)
+- [x] Layouts: Tất cả XML layouts cho 6 màn hình ✅ (Tất cả layout đã có với luxury style)
+- [x] Adapters: SalonAdapter, ServiceDetailAdapter, StylistDetailAdapter ✅
+- [x] Style: Luxury salon theme (vàng ánh kim, trắng kem, nâu nhạt) ✅
 
 ### Dev 2 Checklist
 - [ ] BookingActivity: Chọn service, stylist, ngày, time slot, tạo booking

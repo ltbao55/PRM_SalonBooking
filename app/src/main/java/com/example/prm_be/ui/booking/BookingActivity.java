@@ -369,7 +369,7 @@ public class BookingActivity extends AppCompatActivity {
 
                         // Update availability
                         for (TimeSlotAdapter.TimeSlot slot : timeSlots) {
-                            slot.isAvailable = !bookedTimes.contains(slot.getTime());
+                            slot.setAvailable(!bookedTimes.contains(slot.getTime()));
                         }
 
                         timeSlotAdapter.setTimeSlotList(timeSlots);
