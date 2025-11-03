@@ -141,6 +141,21 @@
 
             </LinearLayout>
 
+            <!-- Google Sign-In -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnGoogleSignIn"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="16dp"
+                android:text="Đăng nhập với Google"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:icon="@android:drawable/ic_menu_share"
+                app:iconTint="@color/white"
+                app:iconGravity="textStart"
+                app:cornerRadius="12dp"
+                app:backgroundTint="@color/secondary" />
+
             <!-- Debug Navigation (For Testing - Remove in Production) -->
             <TextView
                 android:layout_width="wrap_content"

@@ -12,7 +12,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.prm_be.R;
 import com.example.prm_be.data.FirebaseRepo;
+import com.example.prm_be.data.models.User;
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.firebase.auth.FirebaseUser;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -62,8 +64,33 @@ public class RegisterActivity extends AppCompatActivity {
                 return;
             }
 
-            // TODO: Implement register logic using FirebaseRepo
-            // repo.register(email, password, name, new FirebaseRepo.FirebaseCallback<FirebaseUser>() {...});
+            repo.register(email, password, name, new FirebaseRepo.FirebaseCallback<FirebaseUser>() {
+                @Override
+                public void onSuccess(FirebaseUser firebaseUser) {
+                    // Create user document in Firestore
+                    if (firebaseUser != null && firebaseUser.getUid() != null) {
+                        User user = new User(firebaseUser.getUid(), name, email, null);
+                        repo.createUser(user, new FirebaseRepo.FirebaseCallback<Void>() {
+                            @Override
+                            public void onSuccess(Void result) {
+                                finish();
+                            }
+
+                            @Override
+                            public void onFailure(Exception e) {
+                                finish();
+                            }
+                        });
+                    } else {
+                        finish();
+                    }
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+                    Toast.makeText(RegisterActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
         });
 
         tvLogin.setOnClickListener(v -> {

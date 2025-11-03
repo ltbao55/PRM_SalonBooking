@@ -1,7 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
-    // Temporarily disabled - uncomment after adding google-services.json from Firebase
-    // alias(libs.plugins.google.services)
+    alias(libs.plugins.google.services)
 }
 
 android {
@@ -63,15 +62,9 @@ dependencies {
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.storage)
+    implementation("com.google.android.gms:play-services-auth:21.2.0")
     
-    // MongoDB Java Driver
-    implementation("org.mongodb:mongodb-driver-sync:4.11.1") {
-        exclude(group = "org.mongodb", module = "bson-record-codec")
-    }
-    implementation("org.mongodb:mongodb-driver-core:4.11.1") {
-        exclude(group = "org.mongodb", module = "bson-record-codec")
-    }
-    implementation("org.mongodb:bson:4.11.1")
+    // MongoDB dependencies removed (using Firestore only)
     
     // Core library desugaring for Java 8+ APIs
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
