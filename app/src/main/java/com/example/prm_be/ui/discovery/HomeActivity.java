@@ -47,7 +47,7 @@ public class HomeActivity extends AppCompatActivity {
         setupRecyclerView();
         setupSearchView();
         setupViewAllButton();
-        loadMockData(); // Tạm thời dùng mock data để preview UI
+        loadSalonsFromFirebase();
     }
     
     private void setupViewAllButton() {
@@ -127,55 +127,37 @@ public class HomeActivity extends AppCompatActivity {
      * Load mock data để preview UI
      * Sẽ được thay thế bằng FirebaseRepo.getAllSalons() sau khi có BE
      */
-    private void loadMockData() {
-        originalSalonList = createMockSalons();
-        displayedSalonList = new ArrayList<>(originalSalonList);
-        salonAdapter.setSalonList(displayedSalonList);
-        updateEmptyState();
+    private void loadSalonsFromFirebase() {
+        com.example.prm_be.data.FirebaseRepo repo = com.example.prm_be.data.FirebaseRepo.getInstance();
+        repo.getAllSalons(new com.example.prm_be.data.FirebaseRepo.FirebaseCallback<List<Salon>>() {
+            @Override
+            public void onSuccess(List<Salon> salons) {
+                originalSalonList = salons != null ? salons : new ArrayList<>();
+                // Fallback demo data để preview UI nếu Firestore chưa có dữ liệu
+                if (originalSalonList.isEmpty()) {
+                    originalSalonList = createDemoSalons();
+                }
+                displayedSalonList = new ArrayList<>(originalSalonList);
+                salonAdapter.setSalonList(displayedSalonList);
+                updateEmptyState();
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                originalSalonList = new ArrayList<>();
+                displayedSalonList = new ArrayList<>();
+                salonAdapter.setSalonList(displayedSalonList);
+                updateEmptyState();
+            }
+        });
     }
 
-    /**
-     * Tạo mock data để preview
-     */
-    private List<Salon> createMockSalons() {
+    // Demo data dùng khi Firestore trống để người dùng có trải nghiệm UI
+    private List<Salon> createDemoSalons() {
         List<Salon> mockSalons = new ArrayList<>();
-        
-        // Mock Salon 1
-        Salon salon1 = new Salon(
-            "salon_1",
-            "Salon Đẹp - Quận 1",
-            "123 Nguyễn Huệ, Quận 1, TP.HCM",
-            "https://example.com/salon1.jpg"
-        );
-        mockSalons.add(salon1);
-
-        // Mock Salon 2
-        Salon salon2 = new Salon(
-            "salon_2",
-            "Beauty House",
-            "456 Lê Lợi, Quận 3, TP.HCM",
-            "https://example.com/salon2.jpg"
-        );
-        mockSalons.add(salon2);
-
-        // Mock Salon 3
-        Salon salon3 = new Salon(
-            "salon_3",
-            "Hair Studio Pro",
-            "789 Điện Biên Phủ, Bình Thạnh, TP.HCM",
-            "https://example.com/salon3.jpg"
-        );
-        mockSalons.add(salon3);
-
-        // Mock Salon 4
-        Salon salon4 = new Salon(
-            "salon_4",
-            "Style & Cut",
-            "321 Hoàng Văn Thụ, Phú Nhuận, TP.HCM",
-            "https://example.com/salon4.jpg"
-        );
-        mockSalons.add(salon4);
-
+        mockSalons.add(new Salon("demo_1", "Salon Đẹp - Quận 1", "123 Nguyễn Huệ, Quận 1, TP.HCM", ""));
+        mockSalons.add(new Salon("demo_2", "Beauty House", "456 Lê Lợi, Quận 3, TP.HCM", ""));
+        mockSalons.add(new Salon("demo_3", "Hair Studio Pro", "789 Điện Biên Phủ, Bình Thạnh, TP.HCM", ""));
         return mockSalons;
     }
 

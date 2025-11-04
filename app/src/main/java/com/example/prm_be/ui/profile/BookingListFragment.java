@@ -12,7 +12,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.prm_be.R;
+import com.example.prm_be.data.FirebaseRepo;
 import com.example.prm_be.data.models.Booking;
+import com.example.prm_be.data.models.Salon;
+import com.example.prm_be.data.models.Service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +36,7 @@ public class BookingListFragment extends Fragment {
     private BookingAdapter bookingAdapter;
     private String filterType;
     private List<Booking> allBookings;
+    private FirebaseRepo repo;
 
     public static BookingListFragment newInstance(String filterType) {
         BookingListFragment fragment = new BookingListFragment();
@@ -62,6 +66,7 @@ public class BookingListFragment extends Fragment {
         llEmptyState = view.findViewById(R.id.llEmptyState);
         
         setupRecyclerView();
+        repo = FirebaseRepo.getInstance();
         
         return view;
     }
@@ -70,6 +75,32 @@ public class BookingListFragment extends Fragment {
         bookingAdapter = new BookingAdapter();
         rvBookings.setLayoutManager(new LinearLayoutManager(getContext()));
         rvBookings.setAdapter(bookingAdapter);
+
+        bookingAdapter.setOnBookingLongClickListener(booking -> {
+            if (booking == null) return;
+            if (!"pending".equalsIgnoreCase(booking.getStatus()) &&
+                !"confirmed".equalsIgnoreCase(booking.getStatus())) {
+                return; // chỉ cho hủy lịch chưa/đã xác nhận
+            }
+            new com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
+                    .setTitle("Hủy lịch hẹn")
+                    .setMessage("Bạn có chắc muốn hủy lịch này?")
+                    .setNegativeButton("Không", null)
+                    .setPositiveButton("Hủy lịch", (d, which) -> {
+                        repo.cancelBooking(booking.getId(), new FirebaseRepo.FirebaseCallback<Void>() {
+                            @Override
+                            public void onSuccess(Void result) {
+                                android.widget.Toast.makeText(getContext(), "Đã hủy lịch", android.widget.Toast.LENGTH_SHORT).show();
+                            }
+
+                            @Override
+                            public void onFailure(Exception e) {
+                                android.widget.Toast.makeText(getContext(), "Hủy thất bại: " + e.getMessage(), android.widget.Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    })
+                    .show();
+        });
     }
 
     public void setBookings(List<Booking> bookings) {
@@ -109,6 +140,8 @@ public class BookingListFragment extends Fragment {
         }
 
         bookingAdapter.setBookingList(filteredBookings);
+        // Load human-friendly names for salons and services
+        preloadDisplayNames(filteredBookings);
         
         // Show/hide empty state
         if (filteredBookings.isEmpty()) {
@@ -117,6 +150,43 @@ public class BookingListFragment extends Fragment {
         } else {
             rvBookings.setVisibility(View.VISIBLE);
             llEmptyState.setVisibility(View.GONE);
+        }
+    }
+
+    private void preloadDisplayNames(List<Booking> bookings) {
+        if (bookings == null || bookings.isEmpty()) return;
+
+        java.util.Set<String> salonIds = new java.util.HashSet<>();
+        for (Booking b : bookings) {
+            if (b.getSalonId() != null) salonIds.add(b.getSalonId());
+        }
+
+        for (String salonId : salonIds) {
+            repo.getSalonById(salonId, new FirebaseRepo.FirebaseCallback<Salon>() {
+                @Override
+                public void onSuccess(Salon salon) {
+                    if (salon != null) {
+                        bookingAdapter.setSalonName(salon.getId(), salon.getName());
+                        // Optionally preload services names for this salon
+                        repo.getServicesOfSalon(salon.getId(), new FirebaseRepo.FirebaseCallback<java.util.List<Service>>() {
+                            @Override
+                            public void onSuccess(java.util.List<Service> services) {
+                                if (services != null) {
+                                    for (Service s : services) {
+                                        bookingAdapter.setServiceName(s.getId(), s.getName());
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Exception e) { /* ignore */ }
+                        });
+                    }
+                }
+
+                @Override
+                public void onFailure(Exception e) { /* ignore */ }
+            });
         }
     }
 

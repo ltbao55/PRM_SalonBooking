@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.prm_be.R;
 import com.example.prm_be.data.models.Stylist;
 import com.google.android.material.card.MaterialCardView;
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,8 +77,16 @@ public class StylistDetailAdapter extends RecyclerView.Adapter<StylistDetailAdap
                     tvSpecialization.setVisibility(View.GONE);
                 }
                 
-                // Hiển thị placeholder image (sẽ load từ URL sau khi có BE)
-                imgStylist.setImageResource(android.R.drawable.ic_menu_myplaces);
+                // Load image with Glide
+                if (stylist.getImageUrl() != null && !stylist.getImageUrl().isEmpty()) {
+                    Glide.with(imgStylist.getContext())
+                            .load(stylist.getImageUrl())
+                            .placeholder(android.R.drawable.ic_menu_myplaces)
+                            .circleCrop()
+                            .into(imgStylist);
+                } else {
+                    imgStylist.setImageResource(android.R.drawable.ic_menu_myplaces);
+                }
             }
         }
     }

@@ -1,3 +1,22 @@
 <resources>
-    <string name="app_name">PRM_BE</string>
+    <string name="app_name">Salon Booking</string>
+    
+    <!-- Auth Screen Strings -->
+    <string name="login_title">Đăng Nhập</string>
+    <string name="register_title">Đăng Ký</string>
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Mật khẩu</string>
+    <string name="hint_name">Họ tên</string>
+    <string name="hint_confirm_password">Nhập lại mật khẩu</string>
+    <string name="btn_login">Đăng Nhập</string>
+    <string name="btn_register">Đăng Ký</string>
+    <string name="forgot_password">Quên mật khẩu?</string>
+    <string name="no_account">Chưa có tài khoản? </string>
+    <string name="register_here">Đăng ký</string>
+    <string name="have_account">Đã có tài khoản? </string>
+    <string name="login_here">Đăng nhập</string>
+    
+    <!-- Google Sign-In -->
+    <string name="default_web_client_id">407661589941-cp64ed9d0vqghvrj75ap4ohd0bhpelpr.apps.googleusercontent.com</string>
+    <string name="btn_google_sign_in">Đăng nhập với Google</string>
 </resources>

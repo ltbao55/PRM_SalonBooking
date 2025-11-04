@@ -69,6 +69,12 @@ dependencies {
     // Core library desugaring for Java 8+ APIs
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
     
+    // Google Sign-In
+    implementation(libs.googleSignIn)
+    // Glide for image loading
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
+    
     // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

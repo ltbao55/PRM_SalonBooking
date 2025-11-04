@@ -8,9 +8,11 @@ public class Service {
     private String id;
     private String name;
     private long price;
+    private int durationInMinutes; // optional; default 60
 
     // Default constructor (required for Firestore)
     public Service() {
+        this.durationInMinutes = 60;
     }
 
     // Constructor đầy đủ
@@ -18,6 +20,14 @@ public class Service {
         this.id = id;
         this.name = name;
         this.price = price;
+        this.durationInMinutes = 60;
+    }
+
+    public Service(String id, String name, long price, int durationInMinutes) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.durationInMinutes = durationInMinutes;
     }
 
     // Getters và Setters
@@ -43,6 +53,14 @@ public class Service {
 
     public void setPrice(long price) {
         this.price = price;
+    }
+
+    public int getDurationInMinutes() {
+        return durationInMinutes <= 0 ? 60 : durationInMinutes;
+    }
+
+    public void setDurationInMinutes(int durationInMinutes) {
+        this.durationInMinutes = durationInMinutes;
     }
 }
 

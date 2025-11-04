@@ -50,7 +50,7 @@ public class SalonListActivity extends AppCompatActivity {
         setupToolbar();
         setupRecyclerView();
         setupSearchView();
-        loadMockData(); // Tạm thời dùng mock data để preview UI
+        loadFromFirebase();
     }
 
     private void initViews() {
@@ -131,74 +131,36 @@ public class SalonListActivity extends AppCompatActivity {
      * Load mock data để preview UI
      * Sẽ được thay thế bằng FirebaseRepo.getAllSalons() sau khi có BE
      */
-    private void loadMockData() {
-        originalSalonList = createMockSalons();
-        displayedSalonList = new ArrayList<>(originalSalonList);
-        salonAdapter.setSalonList(displayedSalonList);
-        updateResultsCount();
-        updateEmptyState();
+    private void loadFromFirebase() {
+        repo.getAllSalons(new FirebaseRepo.FirebaseCallback<List<Salon>>() {
+            @Override
+            public void onSuccess(List<Salon> salons) {
+                originalSalonList = salons != null ? salons : new ArrayList<>();
+                if (originalSalonList.isEmpty()) {
+                    originalSalonList = createDemoSalons();
+                }
+                displayedSalonList = new ArrayList<>(originalSalonList);
+                salonAdapter.setSalonList(displayedSalonList);
+                updateResultsCount();
+                updateEmptyState();
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                originalSalonList = new ArrayList<>();
+                displayedSalonList = new ArrayList<>();
+                salonAdapter.setSalonList(displayedSalonList);
+                updateResultsCount();
+                updateEmptyState();
+            }
+        });
     }
 
-    /**
-     * Tạo mock data để preview
-     */
-    private List<Salon> createMockSalons() {
+    private List<Salon> createDemoSalons() {
         List<Salon> mockSalons = new ArrayList<>();
-        
-        // Mock Salon 1
-        Salon salon1 = new Salon(
-            "salon_1",
-            "Salon Đẹp - Quận 1",
-            "123 Nguyễn Huệ, Quận 1, TP.HCM",
-            "https://example.com/salon1.jpg"
-        );
-        mockSalons.add(salon1);
-
-        // Mock Salon 2
-        Salon salon2 = new Salon(
-            "salon_2",
-            "Beauty House",
-            "456 Lê Lợi, Quận 3, TP.HCM",
-            "https://example.com/salon2.jpg"
-        );
-        mockSalons.add(salon2);
-
-        // Mock Salon 3
-        Salon salon3 = new Salon(
-            "salon_3",
-            "Hair Studio Pro",
-            "789 Điện Biên Phủ, Bình Thạnh, TP.HCM",
-            "https://example.com/salon3.jpg"
-        );
-        mockSalons.add(salon3);
-
-        // Mock Salon 4
-        Salon salon4 = new Salon(
-            "salon_4",
-            "Style & Cut",
-            "321 Hoàng Văn Thụ, Phú Nhuận, TP.HCM",
-            "https://example.com/salon4.jpg"
-        );
-        mockSalons.add(salon4);
-
-        // Mock Salon 5
-        Salon salon5 = new Salon(
-            "salon_5",
-            "Premium Hair Salon",
-            "555 Nguyễn Trãi, Quận 5, TP.HCM",
-            "https://example.com/salon5.jpg"
-        );
-        mockSalons.add(salon5);
-
-        // Mock Salon 6
-        Salon salon6 = new Salon(
-            "salon_6",
-            "Elite Beauty Center",
-            "888 Võ Văn Tần, Quận 10, TP.HCM",
-            "https://example.com/salon6.jpg"
-        );
-        mockSalons.add(salon6);
-
+        mockSalons.add(new Salon("demo_1", "Salon Đẹp - Quận 1", "123 Nguyễn Huệ, Quận 1, TP.HCM", ""));
+        mockSalons.add(new Salon("demo_2", "Beauty House", "456 Lê Lợi, Quận 3, TP.HCM", ""));
+        mockSalons.add(new Salon("demo_3", "Hair Studio Pro", "789 Điện Biên Phủ, Bình Thạnh, TP.HCM", ""));
         return mockSalons;
     }
 

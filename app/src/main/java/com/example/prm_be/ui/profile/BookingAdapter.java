@@ -25,8 +25,8 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
 
     private List<Booking> bookingList;
     private OnBookingClickListener listener;
-    private List<com.example.prm_be.data.models.Salon> salonCache;
-    private List<com.example.prm_be.data.models.Service> serviceCache;
+    private java.util.Map<String, String> salonIdToName = new java.util.HashMap<>();
+    private java.util.Map<String, String> serviceIdToName = new java.util.HashMap<>();
 
     public interface OnBookingClickListener {
         void onBookingClick(Booking booking);
@@ -34,8 +34,8 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
 
     public BookingAdapter() {
         this.bookingList = new ArrayList<>();
-        this.salonCache = new ArrayList<>();
-        this.serviceCache = new ArrayList<>();
+        this.salonIdToName = new java.util.HashMap<>();
+        this.serviceIdToName = new java.util.HashMap<>();
     }
 
     public void setBookingList(List<Booking> bookingList) {
@@ -47,10 +47,29 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
         this.listener = listener;
     }
 
-    // Helper method to set salon name (will be called from Fragment)
+    public interface OnBookingLongClickListener {
+        void onBookingLongClick(Booking booking);
+    }
+
+    private OnBookingLongClickListener longClickListener;
+
+    public void setOnBookingLongClickListener(OnBookingLongClickListener listener) {
+        this.longClickListener = listener;
+    }
+
+    // Helper methods to cache names
     public void setSalonName(String salonId, String salonName) {
-        // Cache salon names for display
-        // In a real app, you might want to fetch salon data
+        if (salonId != null && salonName != null) {
+            salonIdToName.put(salonId, salonName);
+            notifyDataSetChanged();
+        }
+    }
+
+    public void setServiceName(String serviceId, String serviceName) {
+        if (serviceId != null && serviceName != null) {
+            serviceIdToName.put(serviceId, serviceName);
+            notifyDataSetChanged();
+        }
     }
 
     @NonNull
@@ -88,11 +107,13 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
 
         public void bind(Booking booking) {
             if (booking != null) {
-                // Salon name - will be loaded separately
-                tvSalonName.setText("Salon ID: " + booking.getSalonId());
+                // Salon name from cache
+                String salonName = salonIdToName.get(booking.getSalonId());
+                tvSalonName.setText(salonName != null ? salonName : ("Salon ID: " + booking.getSalonId()));
                 
-                // Service name - will be loaded separately
-                tvServiceName.setText("Dịch vụ ID: " + booking.getServiceId());
+                // Service name from cache
+                String serviceName = serviceIdToName.get(booking.getServiceId());
+                tvServiceName.setText(serviceName != null ? serviceName : ("Dịch vụ ID: " + booking.getServiceId()));
 
                 // Format date and time
                 Calendar calendar = Calendar.getInstance();
@@ -116,6 +137,15 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
                     if (position != RecyclerView.NO_POSITION && listener != null) {
                         listener.onBookingClick(bookingList.get(position));
                     }
+                });
+
+                itemView.setOnLongClickListener(v -> {
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION && longClickListener != null) {
+                        longClickListener.onBookingLongClick(bookingList.get(position));
+                        return true;
+                    }
+                    return false;
                 });
             }
         }
