@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+import android.util.Log;
 
 public class BookingActivity extends AppCompatActivity {
 
@@ -115,6 +116,8 @@ public class BookingActivity extends AppCompatActivity {
         serviceAdapter.setOnServiceClickListener((service, position) -> {
             selectedService = service;
             updateTotalPrice();
+            // Reload time slots vì duration có thể thay đổi
+            loadTimeSlots(selectedDate);
         });
         rvServices.setLayoutManager(new LinearLayoutManager(this));
         rvServices.setAdapter(serviceAdapter);
@@ -324,6 +327,8 @@ public class BookingActivity extends AppCompatActivity {
     }
 
     private void loadTimeSlots(long date) {
+        Log.d("BookingDebug", "loadTimeSlots called - salonId=" + salonId + 
+                ", stylistId=" + (selectedStylistId == null ? "<none>" : selectedStylistId));
         // Calculate start and end of day
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(date);
@@ -341,6 +346,11 @@ public class BookingActivity extends AppCompatActivity {
         // Generate time slots (9:00 - 18:00), độ dài theo duration dịch vụ
         int duration = selectedService != null ? (int)selectedService.getDurationInMinutes() : 60;
         List<TimeSlotAdapter.TimeSlot> timeSlots = generateTimeSlots(date, duration);
+        // Debug: log all slot times generated
+        SimpleDateFormat dbgFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm z", Locale.getDefault());
+        for (TimeSlotAdapter.TimeSlot s : timeSlots) {
+            Log.d("BookingDebug", "Slot -> " + s.getTime() + " | ts=" + s.getTimestamp() + " | " + dbgFormat.format(new java.util.Date(s.getTimestamp())));
+        }
 
         // Always show time slots first (for better UX)
         timeSlotAdapter.setTimeSlotList(timeSlots);
@@ -355,26 +365,22 @@ public class BookingActivity extends AppCompatActivity {
                 new FirebaseRepo.FirebaseCallback<List<Booking>>() {
                     @Override
                     public void onSuccess(List<Booking> bookings) {
-                        // Mark slots as booked
-                        List<String> bookedTimes = new ArrayList<>();
-                        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
-                        
+                        Log.d("BookingDebug", "Bookings fetched: count=" + (bookings == null ? 0 : bookings.size()));
                         if (bookings != null) {
-                            for (Booking booking : bookings) {
-                                Calendar bookingCal = Calendar.getInstance();
-                                bookingCal.setTimeInMillis(booking.getTimestamp());
-                                String timeStr = timeFormat.format(bookingCal.getTime());
-                                bookedTimes.add(timeStr);
+                            for (Booking b : bookings) {
+                                Log.d("BookingDebug", "Booking -> id=" + b.getId() + 
+                                        ", stylistId=" + b.getStylistId() +
+                                        ", ts=" + b.getTimestamp() + 
+                                        ", time=" + dbgFormat.format(new java.util.Date(b.getTimestamp())) +
+                                        ", status=" + b.getStatus());
                             }
                         }
-
-                        // Update availability
-                        for (TimeSlotAdapter.TimeSlot slot : timeSlots) {
-                            slot.setAvailable(!bookedTimes.contains(slot.getTime()));
-                        }
-
+                        // Đánh dấu slot đã đặt - check overlap với bookings
+                        // Nếu đã chọn stylist, chỉ check bookings của stylist đó
+                        // Nếu chưa chọn stylist, check tất cả bookings của salon
+                        markBookedSlots(timeSlots, bookings, duration);
+                        
                         timeSlotAdapter.setTimeSlotList(timeSlots);
-                        timeSlotAdapter.setBookedSlots(bookedTimes);
                         selectedTimeSlot = null; // Reset selection when date changes
                     }
 
@@ -389,6 +395,103 @@ public class BookingActivity extends AppCompatActivity {
             // No Firebase, just show all slots as available
             selectedTimeSlot = null;
         }
+    }
+
+    /**
+     * Đánh dấu các slot đã được đặt dựa trên danh sách bookings
+     * Logic: Một slot được coi là đã đặt nếu có booking overlap với slot đó
+     * Overlap: booking timestamp nằm trong khoảng [slot start, slot start + duration)
+     */
+    private void markBookedSlots(List<TimeSlotAdapter.TimeSlot> timeSlots, List<Booking> bookings, int slotDurationMinutes) {
+        if (bookings == null || bookings.isEmpty()) {
+            // Không có booking nào, tất cả slot đều available
+            Log.d("BookingDebug", "No bookings found, all slots available");
+            for (TimeSlotAdapter.TimeSlot slot : timeSlots) {
+                slot.setAvailable(true);
+            }
+            return;
+        }
+
+        Log.d("BookingDebug", "Marking booked slots - total slots: " + timeSlots.size() + ", total bookings: " + bookings.size());
+        
+        // Với mỗi slot, check xem có booking nào overlap không
+        for (TimeSlotAdapter.TimeSlot slot : timeSlots) {
+            long slotStartTime = slot.getTimestamp();
+            long slotEndTime = slotStartTime + (slotDurationMinutes * 60 * 1000L); // Convert minutes to milliseconds
+            
+            boolean isBooked = false;
+            Booking matchedBooking = null;
+            
+            for (Booking booking : bookings) {
+                long bookingTime = booking.getTimestamp();
+                
+                // Check overlap: booking time nằm trong khoảng [slotStartTime, slotEndTime)
+                // Hoặc booking time gần với slot start time (trong cùng phút)
+                if (isTimeSlotOverlap(slotStartTime, slotEndTime, bookingTime)) {
+                    isBooked = true;
+                    matchedBooking = booking;
+                    break;
+                }
+            }
+            
+            slot.setAvailable(!isBooked);
+            
+            // Log để debug
+            if (isBooked && matchedBooking != null) {
+                SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+                Log.d("BookingDebug", "Slot " + slot.getTime() + " marked as BOOKED by booking " + matchedBooking.getId() + 
+                    " (booking time: " + timeFormat.format(new java.util.Date(matchedBooking.getTimestamp())) + ")");
+            }
+        }
+        
+        // Log summary
+        int bookedCount = 0;
+        for (TimeSlotAdapter.TimeSlot slot : timeSlots) {
+            if (!slot.isAvailable()) bookedCount++;
+        }
+        Log.d("BookingDebug", "Summary: " + bookedCount + " slots marked as booked out of " + timeSlots.size());
+    }
+
+    /**
+     * Kiểm tra xem booking timestamp có overlap với slot không
+     * Slot: [slotStart, slotEnd)
+     * Booking overlap nếu: bookingTime nằm trong [slotStart, slotEnd) 
+     * hoặc bookingTime gần slotStart (trong cùng giờ:phút)
+     */
+    private boolean isTimeSlotOverlap(long slotStartTime, long slotEndTime, long bookingTime) {
+        // Check 1: Booking time nằm trong khoảng slot
+        if (bookingTime >= slotStartTime && bookingTime < slotEndTime) {
+            return true;
+        }
+        
+        // Check 2: Normalize về cùng giờ:phút để so sánh (tránh trường hợp lệch vài giây/millisecond)
+        // Đây là cách chính xác nhất để so sánh "cùng một khung giờ"
+        Calendar slotCal = Calendar.getInstance();
+        slotCal.setTimeInMillis(slotStartTime);
+        int slotHour = slotCal.get(Calendar.HOUR_OF_DAY);
+        int slotMinute = slotCal.get(Calendar.MINUTE);
+        slotCal.set(Calendar.SECOND, 0);
+        slotCal.set(Calendar.MILLISECOND, 0);
+        
+        Calendar bookingCal = Calendar.getInstance();
+        bookingCal.setTimeInMillis(bookingTime);
+        int bookingHour = bookingCal.get(Calendar.HOUR_OF_DAY);
+        int bookingMinute = bookingCal.get(Calendar.MINUTE);
+        bookingCal.set(Calendar.SECOND, 0);
+        bookingCal.set(Calendar.MILLISECOND, 0);
+        
+        // So sánh giờ và phút - nếu giống nhau thì là cùng slot
+        if (slotHour == bookingHour && slotMinute == bookingMinute) {
+            return true;
+        }
+        
+        // Check 3: Nếu booking time rất gần slot start (trong vòng 1 phút) cũng coi là overlap
+        long timeDiff = Math.abs(bookingTime - slotStartTime);
+        if (timeDiff < 60 * 1000) { // Trong vòng 1 phút
+            return true;
+        }
+        
+        return false;
     }
 
     private List<TimeSlotAdapter.TimeSlot> generateTimeSlots(long date, int durationMinutes) {

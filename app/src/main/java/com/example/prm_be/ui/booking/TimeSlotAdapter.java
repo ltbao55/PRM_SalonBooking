@@ -22,7 +22,8 @@ public class TimeSlotAdapter extends RecyclerView.Adapter<TimeSlotAdapter.TimeSl
     private List<TimeSlot> timeSlotList;
     private OnTimeSlotClickListener listener;
     private int selectedPosition = -1;
-    private List<String> bookedSlots; // Danh sách các slot đã được đặt
+    private List<String> bookedSlots; // Danh sách các slot đã được đặt (giữ lại để tương thích)
+    private List<Long> bookedTimestamps; // Danh sách timestamp các slot đã được đặt
 
     public interface OnTimeSlotClickListener {
         void onTimeSlotClick(TimeSlot timeSlot, int position);
@@ -59,6 +60,7 @@ public class TimeSlotAdapter extends RecyclerView.Adapter<TimeSlotAdapter.TimeSl
     public TimeSlotAdapter() {
         this.timeSlotList = new ArrayList<>();
         this.bookedSlots = new ArrayList<>();
+        this.bookedTimestamps = new ArrayList<>();
     }
 
     public void setTimeSlotList(List<TimeSlot> timeSlotList) {
@@ -74,6 +76,19 @@ public class TimeSlotAdapter extends RecyclerView.Adapter<TimeSlotAdapter.TimeSl
             TimeSlot slot = timeSlotList.get(i);
             boolean wasAvailable = slot.isAvailable();
             slot.setAvailable(!this.bookedSlots.contains(slot.getTime()));
+            if (wasAvailable != slot.isAvailable()) {
+                notifyItemChanged(i);
+            }
+        }
+    }
+
+    // API mới: set danh sách timestamp đã đặt, so sánh theo millis chính xác
+    public void setBookedTimestamps(List<Long> bookedTimestamps) {
+        this.bookedTimestamps = bookedTimestamps != null ? bookedTimestamps : new ArrayList<>();
+        for (int i = 0; i < timeSlotList.size(); i++) {
+            TimeSlot slot = timeSlotList.get(i);
+            boolean wasAvailable = slot.isAvailable();
+            slot.setAvailable(!this.bookedTimestamps.contains(slot.getTimestamp()));
             if (wasAvailable != slot.isAvailable()) {
                 notifyItemChanged(i);
             }

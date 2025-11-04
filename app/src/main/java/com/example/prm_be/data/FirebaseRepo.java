@@ -625,15 +625,22 @@ public class FirebaseRepo {
             long endTimestamp, 
             FirebaseCallback<List<Booking>> callback) {
         
+        if (firestore == null) {
+            callback.onFailure(new IllegalStateException("Firestore is not initialized"));
+            return;
+        }
+        
         Query query = firestore.collection(COLLECTION_BOOKINGS)
             .whereEqualTo("salonId", salonId)
             .whereGreaterThanOrEqualTo("timestamp", startTimestamp)
             .whereLessThanOrEqualTo("timestamp", endTimestamp);
         
-        // Nếu có stylistId, filter thêm
+        // Nếu có stylistId, filter thêm theo stylistId
+        // Nếu không có stylistId, lấy tất cả bookings của salon (bao gồm cả bookings không có stylist)
         if (stylistId != null && !stylistId.isEmpty()) {
             query = query.whereEqualTo("stylistId", stylistId);
         }
+        // Nếu stylistId null hoặc empty, không filter theo stylist - lấy tất cả
         
         query.get()
             .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -642,10 +649,22 @@ public class FirebaseRepo {
                     List<Booking> bookings = new ArrayList<>();
                     for (QueryDocumentSnapshot document : querySnapshot) {
                         Booking booking = document.toObject(Booking.class);
-                        booking.setId(document.getId());
-                        // Chỉ lấy các booking confirmed hoặc pending
-                        if ("confirmed".equals(booking.getStatus()) || "pending".equals(booking.getStatus())) {
-                            bookings.add(booking);
+                        if (booking != null) {
+                            booking.setId(document.getId());
+                            
+                            // Chỉ lấy các booking confirmed hoặc pending (không lấy cancelled)
+                            String status = booking.getStatus();
+                            if (status != null && ("confirmed".equals(status) || "pending".equals(status))) {
+                                // Nếu đã chọn stylist, chỉ lấy bookings của stylist đó
+                                // Nếu chưa chọn stylist, lấy tất cả bookings (bao gồm cả bookings không có stylist)
+                                if (stylistId != null && !stylistId.isEmpty()) {
+                                    // Đã filter trong query rồi, chỉ cần add
+                                    bookings.add(booking);
+                                } else {
+                                    // Chưa chọn stylist: lấy tất cả bookings (có stylist và không có stylist)
+                                    bookings.add(booking);
+                                }
+                            }
                         }
                     }
                     callback.onSuccess(bookings);
@@ -654,6 +673,7 @@ public class FirebaseRepo {
             .addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
+                    Log.e(TAG, "Error getting bookings by stylist and date", e);
                     callback.onFailure(e);
                 }
             });
