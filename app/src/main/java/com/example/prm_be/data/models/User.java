@@ -9,6 +9,7 @@ public class User {
     private String name;
     private String email;
     private String avatarUrl;
+    private String role; // user | staff | admin
 
     // Default constructor (required for Firestore)
     public User() {
@@ -20,6 +21,14 @@ public class User {
         this.name = name;
         this.email = email;
         this.avatarUrl = avatarUrl;
+    }
+
+    public User(String uid, String name, String email, String avatarUrl, String role) {
+        this.uid = uid;
+        this.name = name;
+        this.email = email;
+        this.avatarUrl = avatarUrl;
+        this.role = role;
     }
 
     // Getters và Setters
@@ -53,6 +62,14 @@ public class User {
 
     public void setAvatarUrl(String avatarUrl) {
         this.avatarUrl = avatarUrl;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }
 

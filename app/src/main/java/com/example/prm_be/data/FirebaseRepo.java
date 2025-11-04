@@ -127,7 +127,7 @@ public class FirebaseRepo {
                         FirebaseUser firebaseUser = auth.getCurrentUser();
                         if (firebaseUser != null) {
                             // Tạo User document trong Firestore
-                            User user = new User(firebaseUser.getUid(), name, email, null);
+                            User user = new User(firebaseUser.getUid(), name, email, null, "user");
                             createUser(user, new FirebaseCallback<Void>() {
                                 @Override
                                 public void onSuccess(Void result) {
@@ -185,7 +185,7 @@ public class FirebaseRepo {
                                             ? firebaseUser.getPhotoUrl().toString() 
                                             : null;
                                     
-                                    User newUser = new User(firebaseUser.getUid(), name, email, avatarUrl);
+                                    User newUser = new User(firebaseUser.getUid(), name, email, avatarUrl, "user");
                                     createUser(newUser, new FirebaseCallback<Void>() {
                                         @Override
                                         public void onSuccess(Void result) {
@@ -270,6 +270,7 @@ public class FirebaseRepo {
         userMap.put("name", user.getName());
         userMap.put("email", user.getEmail());
         userMap.put("avatarUrl", user.getAvatarUrl() != null ? user.getAvatarUrl() : "");
+        userMap.put("role", user.getRole() != null ? user.getRole() : "user");
         
         firestore.collection(COLLECTION_USERS)
             .document(user.getUid())
@@ -327,6 +328,7 @@ public class FirebaseRepo {
         if (user.getName() != null) updates.put("name", user.getName());
         if (user.getEmail() != null) updates.put("email", user.getEmail());
         if (user.getAvatarUrl() != null) updates.put("avatarUrl", user.getAvatarUrl());
+        if (user.getRole() != null) updates.put("role", user.getRole());
         
         firestore.collection(COLLECTION_USERS)
             .document(user.getUid())
@@ -343,6 +345,20 @@ public class FirebaseRepo {
                     callback.onFailure(e);
                 }
             });
+    }
+
+    /**
+     * Cập nhật role cho User (user/staff/admin)
+     */
+    public void updateUserRole(@NonNull String uid, @NonNull String role, FirebaseCallback<Void> callback) {
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("role", role);
+
+        firestore.collection(COLLECTION_USERS)
+                .document(uid)
+                .update(updates)
+                .addOnSuccessListener(aVoid -> callback.onSuccess(null))
+                .addOnFailureListener(callback::onFailure);
     }
 
     /**
@@ -679,6 +695,51 @@ public class FirebaseRepo {
             });
     }
     
+    /**
+     * Lấy lịch làm việc của staff trong khoảng thời gian
+     * @param staffId ID của staff (stylistId)
+     * @param startDate Timestamp bắt đầu (start of week/day)
+     * @param endDate Timestamp kết thúc (end of week/day)
+     * @param callback Callback trả về danh sách booking
+     */
+    public void getStaffSchedule(String staffId, long startDate, long endDate, FirebaseCallback<List<Booking>> callback) {
+        if (firestore == null) {
+            callback.onFailure(new IllegalStateException("Firestore is not initialized"));
+            return;
+        }
+        
+        // Query chỉ filter theo stylistId (không cần composite index)
+        // Filter timestamp sẽ làm ở client-side để tránh lỗi FAILED_PRECONDITION
+        firestore.collection(COLLECTION_BOOKINGS)
+            .whereEqualTo("stylistId", staffId)
+            .get()
+            .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                @Override
+                public void onSuccess(QuerySnapshot querySnapshot) {
+                    List<Booking> bookings = new ArrayList<>();
+                    for (QueryDocumentSnapshot document : querySnapshot) {
+                        Booking booking = document.toObject(Booking.class);
+                        booking.setId(document.getId());
+                        
+                        // Filter timestamp ở client-side
+                        long timestamp = booking.getTimestamp();
+                        if (timestamp >= startDate && timestamp <= endDate) {
+                            bookings.add(booking);
+                        }
+                    }
+                    // Sắp xếp theo timestamp tăng dần
+                    java.util.Collections.sort(bookings, (a, b) -> Long.compare(a.getTimestamp(), b.getTimestamp()));
+                    callback.onSuccess(bookings);
+                }
+            })
+            .addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    callback.onFailure(e);
+                }
+            });
+    }
+
     /**
      * Interface callback cho các thao tác Firebase
      */

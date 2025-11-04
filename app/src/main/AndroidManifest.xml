@@ -72,6 +72,22 @@
         <activity
             android:name=".MainActivity"
             android:exported="false" />
+        
+        <!-- Role-based placeholder screens -->
+        <activity
+            android:name=".ui.staff.StaffHomeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.staff.StaffScheduleActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.admin.AdminDashboardActivity"
+            android:exported="false" />
+
+        <!-- Dev tools activity for seeding test accounts -->
+        <activity
+            android:name=".ui.dev.DevToolsActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

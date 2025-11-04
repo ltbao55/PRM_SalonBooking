@@ -17,6 +17,9 @@ import com.example.prm_be.R;
 import com.example.prm_be.data.FirebaseRepo;
 import com.example.prm_be.data.models.User;
 import com.example.prm_be.ui.discovery.HomeActivity;
+import com.example.prm_be.ui.staff.StaffHomeActivity;
+import com.example.prm_be.ui.admin.AdminDashboardActivity;
+import com.example.prm_be.ui.dev.DevToolsActivity;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -56,6 +59,16 @@ public class LoginActivity extends AppCompatActivity {
         // Setup Toolbar
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        if (toolbar != null) {
+            toolbar.inflateMenu(R.menu.menu_login);
+            toolbar.setOnMenuItemClickListener(item -> {
+                if (item.getItemId() == R.id.action_dev_tools) {
+                    startActivity(new Intent(this, DevToolsActivity.class));
+                    return true;
+                }
+                return false;
+            });
+        }
 
         initViews();
         initGoogleSignIn();
@@ -98,6 +111,7 @@ public class LoginActivity extends AppCompatActivity {
             btnGoogleSignIn.setOnClickListener(v -> startGoogleSignIn());
         }
 
+
         tvRegister.setOnClickListener(v -> {
             startActivity(new Intent(this, RegisterActivity.class));
         });
@@ -131,7 +145,7 @@ public class LoginActivity extends AppCompatActivity {
                         public void onSuccess(FirebaseUser user) {
                             showLoading(false);
                             Log.d("LoginActivity", "Google sign-in success: " + user.getEmail());
-                            navigateToHome();
+                            fetchRoleAndNavigate(user.getUid());
                         }
 
                         @Override
@@ -153,11 +167,35 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    private void navigateToHome() {
-        Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+    private void navigateByRole(String role) {
+        Class<?> destination;
+        if ("admin".equalsIgnoreCase(role)) {
+            destination = AdminDashboardActivity.class;
+        } else if ("staff".equalsIgnoreCase(role)) {
+            destination = StaffHomeActivity.class;
+        } else {
+            destination = HomeActivity.class;
+        }
+        Intent intent = new Intent(LoginActivity.this, destination);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
+    }
+
+    private void fetchRoleAndNavigate(String uid) {
+        repo.getUser(uid, new FirebaseRepo.FirebaseCallback<User>() {
+            @Override
+            public void onSuccess(User user) {
+                String role = user.getRole() != null ? user.getRole() : "user";
+                navigateByRole(role);
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                // Nếu không lấy được user profile, fallback về Home của user thường
+                navigateByRole("user");
+            }
+        });
     }
 
     private boolean validateInput(String email, String password) {
@@ -196,7 +234,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onSuccess(FirebaseUser user) {
                 showLoading(false);
                 Log.d("LoginActivity", "Login successful: " + user.getEmail());
-                navigateToHome();
+                fetchRoleAndNavigate(user.getUid());
             }
 
             @Override
