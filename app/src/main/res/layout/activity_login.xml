@@ -162,7 +162,6 @@
                     android:focusable="true" />
 
             </LinearLayout>
-
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>

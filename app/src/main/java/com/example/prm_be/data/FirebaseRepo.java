@@ -130,7 +130,6 @@ public class FirebaseRepo {
                                 
                                 @Override
                                 public void onFailure(Exception e) {
-                                    Log.e(TAG, "Error creating user document", e);
                                     // Vẫn trả về success vì user đã được tạo trong Auth
                                     callback.onSuccess(firebaseUser);
                                 }
