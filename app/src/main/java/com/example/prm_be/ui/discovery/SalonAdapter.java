@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.prm_be.R;
 import com.example.prm_be.data.models.Salon;
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,7 +77,12 @@ public class SalonAdapter extends RecyclerView.Adapter<SalonAdapter.SalonViewHol
             itemView.setOnClickListener(v -> {
                 int position = getAdapterPosition();
                 if (position != RecyclerView.NO_POSITION && listener != null) {
-                    listener.onSalonClick(salonList.get(position));
+                    Salon clicked = salonList.get(position);
+                    if (clicked != null && clicked.getId() != null && !clicked.getId().isEmpty()) {
+                        listener.onSalonClick(clicked);
+                    } else {
+                        android.widget.Toast.makeText(itemView.getContext(), "Salon không hợp lệ (thiếu ID)", android.widget.Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
         }
@@ -86,8 +92,16 @@ public class SalonAdapter extends RecyclerView.Adapter<SalonAdapter.SalonViewHol
                 tvSalonName.setText(salon.getName());
                 tvAddress.setText(salon.getAddress());
                 
-                // Hiển thị placeholder image (sẽ load từ URL sau khi có BE)
-                imgSalon.setImageResource(android.R.drawable.ic_menu_gallery);
+                // Load image with Glide
+                if (salon.getImageUrl() != null && !salon.getImageUrl().isEmpty()) {
+                    Glide.with(imgSalon.getContext())
+                            .load(salon.getImageUrl())
+                            .placeholder(android.R.drawable.ic_menu_gallery)
+                            .centerCrop()
+                            .into(imgSalon);
+                } else {
+                    imgSalon.setImageResource(android.R.drawable.ic_menu_gallery);
+                }
                 
                 // Hiện tại không có service count từ model, để mặc định
                 tvServiceCount.setText("Xem chi tiết");

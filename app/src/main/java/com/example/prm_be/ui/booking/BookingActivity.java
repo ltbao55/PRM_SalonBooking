@@ -338,8 +338,9 @@ public class BookingActivity extends AppCompatActivity {
         calendar.set(Calendar.SECOND, 59);
         long endTimestamp = calendar.getTimeInMillis();
 
-        // Generate time slots (9:00 - 18:00, mỗi slot 60 phút)
-        List<TimeSlotAdapter.TimeSlot> timeSlots = generateTimeSlots(date);
+        // Generate time slots (9:00 - 18:00), độ dài theo duration dịch vụ
+        int duration = selectedService != null ? (int)selectedService.getDurationInMinutes() : 60;
+        List<TimeSlotAdapter.TimeSlot> timeSlots = generateTimeSlots(date, duration);
 
         // Always show time slots first (for better UX)
         timeSlotAdapter.setTimeSlotList(timeSlots);
@@ -390,7 +391,7 @@ public class BookingActivity extends AppCompatActivity {
         }
     }
 
-    private List<TimeSlotAdapter.TimeSlot> generateTimeSlots(long date) {
+    private List<TimeSlotAdapter.TimeSlot> generateTimeSlots(long date, int durationMinutes) {
         List<TimeSlotAdapter.TimeSlot> slots = new ArrayList<>();
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(date);
@@ -401,24 +402,26 @@ public class BookingActivity extends AppCompatActivity {
         int startHour = 9;
         int endHour = 18;
 
-        for (int hour = startHour; hour <= endHour; hour++) {
-            calendar.set(Calendar.HOUR_OF_DAY, hour);
-            calendar.set(Calendar.MINUTE, 0);
-            calendar.set(Calendar.SECOND, 0);
-            calendar.set(Calendar.MILLISECOND, 0);
+        calendar.set(Calendar.HOUR_OF_DAY, startHour);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
 
+        Calendar endCal = Calendar.getInstance();
+        endCal.setTimeInMillis(date);
+        endCal.set(Calendar.HOUR_OF_DAY, endHour);
+        endCal.set(Calendar.MINUTE, 0);
+        endCal.set(Calendar.SECOND, 0);
+        endCal.set(Calendar.MILLISECOND, 0);
+
+        while (calendar.before(endCal) || calendar.equals(endCal)) {
             long timestamp = calendar.getTimeInMillis();
             String timeStr = timeFormat.format(calendar.getTime());
-
-            // Check if slot is in the past
             boolean isPast = timestamp < System.currentTimeMillis();
 
-            TimeSlotAdapter.TimeSlot slot = new TimeSlotAdapter.TimeSlot(
-                timeStr,
-                timestamp,
-                !isPast // Not available if in the past
-            );
-            slots.add(slot);
+            slots.add(new TimeSlotAdapter.TimeSlot(timeStr, timestamp, !isPast));
+
+            calendar.add(Calendar.MINUTE, Math.max(15, durationMinutes));
         }
 
         return slots;

@@ -64,6 +64,8 @@ public class BookingHistoryActivity extends AppCompatActivity {
         }).attach();
     }
 
+    private com.google.firebase.firestore.ListenerRegistration listenerRegistration;
+
     private void loadBookingHistory() {
         if (!repo.isUserLoggedIn()) {
             Toast.makeText(this, "Vui lòng đăng nhập", Toast.LENGTH_SHORT).show();
@@ -79,12 +81,12 @@ public class BookingHistoryActivity extends AppCompatActivity {
         }
 
         String uid = currentUser.getUid();
-        repo.getUserBookings(uid, new FirebaseRepo.FirebaseCallback<List<Booking>>() {
+        // Đăng ký lắng nghe realtime
+        if (listenerRegistration != null) listenerRegistration.remove();
+        listenerRegistration = repo.getUserBookingsListener(uid, new FirebaseRepo.FirebaseCallback<List<Booking>>() {
             @Override
             public void onSuccess(List<Booking> bookings) {
                 allBookings = bookings;
-                
-                // Update both fragments with bookings
                 updateFragmentsWithBookings(bookings);
             }
 
@@ -92,11 +94,14 @@ public class BookingHistoryActivity extends AppCompatActivity {
             public void onFailure(Exception e) {
                 Toast.makeText(BookingHistoryActivity.this, 
                     "Không thể tải lịch sử đặt lịch: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                
-                // Still update fragments with empty list
-                updateFragmentsWithBookings(new java.util.ArrayList<>());
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (listenerRegistration != null) listenerRegistration.remove();
     }
 
     private void updateFragmentsWithBookings(List<Booking> bookings) {

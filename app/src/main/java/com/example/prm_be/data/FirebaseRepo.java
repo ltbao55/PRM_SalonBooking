@@ -26,6 +26,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.ListenerRegistration;
+
+import android.net.Uri;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,6 +46,7 @@ public class FirebaseRepo {
     
     private FirebaseAuth auth;
     private FirebaseFirestore firestore;
+    private com.google.firebase.storage.FirebaseStorage storage;
     
     // Collection names
     private static final String COLLECTION_USERS = "users";
@@ -60,11 +64,13 @@ public class FirebaseRepo {
         try {
             auth = FirebaseAuth.getInstance();
             firestore = FirebaseFirestore.getInstance();
+            storage = com.google.firebase.storage.FirebaseStorage.getInstance();
         } catch (Exception e) {
             Log.e(TAG, "Firebase initialization failed. Make sure google-services.json is added.", e);
             // Firebase chưa được setup - sẽ trả về null khi gọi methods
             auth = null;
             firestore = null;
+            storage = null;
         }
     }
     
@@ -338,6 +344,25 @@ public class FirebaseRepo {
                 }
             });
     }
+
+    /**
+     * Upload ảnh đại diện lên Firebase Storage và trả về URL
+     */
+    public void uploadProfileImage(@NonNull Uri imageUri, @NonNull String uid, FirebaseCallback<String> callback) {
+        if (storage == null) {
+            callback.onFailure(new IllegalStateException("Firebase Storage is not initialized"));
+            return;
+        }
+
+        com.google.firebase.storage.StorageReference avatarsRef = storage.getReference()
+                .child("avatars/").child(uid + ".jpg");
+
+        avatarsRef.putFile(imageUri)
+                .addOnSuccessListener(taskSnapshot -> avatarsRef.getDownloadUrl()
+                        .addOnSuccessListener(uri -> callback.onSuccess(uri.toString()))
+                        .addOnFailureListener(callback::onFailure))
+                .addOnFailureListener(callback::onFailure);
+    }
     
     // ========== SALON METHODS ==========
     
@@ -493,6 +518,29 @@ public class FirebaseRepo {
                 }
             });
     }
+
+    /**
+     * Lấy booking theo ID
+     */
+    public void getBookingById(String bookingId, FirebaseCallback<Booking> callback) {
+        firestore.collection(COLLECTION_BOOKINGS)
+                .document(bookingId)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        Booking booking = documentSnapshot.toObject(Booking.class);
+                        if (booking != null) {
+                            booking.setId(documentSnapshot.getId());
+                            callback.onSuccess(booking);
+                        } else {
+                            callback.onFailure(new Exception("Failed to parse booking"));
+                        }
+                    } else {
+                        callback.onFailure(new Exception("Booking not found"));
+                    }
+                })
+                .addOnFailureListener(callback::onFailure);
+    }
     
     /**
      * Lấy tất cả booking của một user
@@ -502,7 +550,7 @@ public class FirebaseRepo {
     public void getUserBookings(String userId, FirebaseCallback<List<Booking>> callback) {
         firestore.collection(COLLECTION_BOOKINGS)
             .whereEqualTo("userId", userId)
-            .orderBy("timestamp", Query.Direction.DESCENDING)
+            // Tránh yêu cầu composite index bằng cách không dùng orderBy trên server
             .get()
             .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                 @Override
@@ -513,6 +561,8 @@ public class FirebaseRepo {
                         booking.setId(document.getId());
                         bookings.add(booking);
                     }
+                    // Sắp xếp client-side theo timestamp giảm dần
+                    java.util.Collections.sort(bookings, (a, b) -> Long.compare(b.getTimestamp(), a.getTimestamp()));
                     callback.onSuccess(bookings);
                 }
             })
@@ -522,6 +572,41 @@ public class FirebaseRepo {
                     callback.onFailure(e);
                 }
             });
+    }
+
+    /**
+     * Lắng nghe realtime danh sách bookings của user
+     */
+    public ListenerRegistration getUserBookingsListener(String userId, FirebaseCallback<List<Booking>> callback) {
+        return firestore.collection(COLLECTION_BOOKINGS)
+                .whereEqualTo("userId", userId)
+                .addSnapshotListener((value, error) -> {
+                    if (error != null) {
+                        callback.onFailure(error);
+                        return;
+                    }
+                    List<Booking> bookings = new ArrayList<>();
+                    if (value != null) {
+                        for (QueryDocumentSnapshot document : value) {
+                            Booking booking = document.toObject(Booking.class);
+                            booking.setId(document.getId());
+                            bookings.add(booking);
+                        }
+                    }
+                    java.util.Collections.sort(bookings, (a, b) -> Long.compare(b.getTimestamp(), a.getTimestamp()));
+                    callback.onSuccess(bookings);
+                });
+    }
+
+    /**
+     * Hủy booking (đổi status thành "cancelled")
+     */
+    public void cancelBooking(String bookingId, FirebaseCallback<Void> callback) {
+        firestore.collection(COLLECTION_BOOKINGS)
+                .document(bookingId)
+                .update("status", "cancelled")
+                .addOnSuccessListener(aVoid -> callback.onSuccess(null))
+                .addOnFailureListener(callback::onFailure);
     }
     
     /**

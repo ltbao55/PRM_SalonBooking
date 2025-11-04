@@ -55,7 +55,8 @@ public class SalonDetailActivity extends AppCompatActivity {
         repo = FirebaseRepo.getInstance();
         
         salonId = getIntent().getStringExtra(EXTRA_SALON_ID);
-        if (salonId == null) {
+        if (salonId == null || salonId.isEmpty()) {
+            android.widget.Toast.makeText(this, "Thiếu salonId", android.widget.Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
@@ -64,7 +65,7 @@ public class SalonDetailActivity extends AppCompatActivity {
         setupToolbar();
         setupAdapters();
         setupClickListeners();
-        loadMockData(); // Tạm thời dùng mock data để preview UI
+        loadDataFromFirebase();
     }
 
     private void initViews() {
@@ -115,60 +116,60 @@ public class SalonDetailActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     * Load mock data để preview UI
-     * Sẽ được thay thế bằng FirebaseRepo sau khi có BE
-     */
-    private void loadMockData() {
-        // Mock salon data
-        currentSalon = new Salon(
-            salonId,
-            "Salon Luxury Premium",
-            "123 Nguyễn Huệ, Quận 1, TP.HCM",
-            "https://example.com/salon1.jpg"
-        );
-
-        // Update UI
-        if (currentSalon != null) {
-            tvSalonName.setText(currentSalon.getName());
-            tvSalonAddress.setText(currentSalon.getAddress());
-            
-            // Update CollapsingToolbar title
-            CollapsingToolbarLayout collapsingToolbar = findViewById(R.id.collapsingToolbar);
-            if (collapsingToolbar != null) {
-                collapsingToolbar.setTitle(currentSalon.getName());
+    private void loadDataFromFirebase() {
+        // Load salon meta
+        repo.getSalonById(salonId, new FirebaseRepo.FirebaseCallback<Salon>() {
+            @Override
+            public void onSuccess(Salon salon) {
+                currentSalon = salon;
+                if (salon != null) {
+                    tvSalonName.setText(salon.getName());
+                    tvSalonAddress.setText(salon.getAddress());
+                    CollapsingToolbarLayout collapsingToolbar = findViewById(R.id.collapsingToolbar);
+                    if (collapsingToolbar != null) {
+                        collapsingToolbar.setTitle(salon.getName());
+                    }
+                    // Load image (use Glide if available)
+                    if (salon.getImageUrl() != null && !salon.getImageUrl().isEmpty()) {
+                        try {
+                            com.bumptech.glide.Glide.with(SalonDetailActivity.this)
+                                    .load(salon.getImageUrl())
+                                    .placeholder(android.R.drawable.ic_menu_gallery)
+                                    .centerCrop()
+                                    .into(imgSalon);
+                        } catch (Throwable t) {
+                            imgSalon.setImageResource(android.R.drawable.ic_menu_gallery);
+                        }
+                    } else {
+                        imgSalon.setImageResource(android.R.drawable.ic_menu_gallery);
+                    }
+                }
             }
-            
-            // Placeholder image
-            imgSalon.setImageResource(android.R.drawable.ic_menu_gallery);
-        }
 
-        // Mock services
-        List<Service> mockServices = createMockServices();
-        serviceAdapter.setServiceList(mockServices);
+            @Override
+            public void onFailure(Exception e) { /* ignore */ }
+        });
 
-        // Mock stylists
-        List<Stylist> mockStylists = createMockStylists();
-        stylistAdapter.setStylistList(mockStylists);
-    }
+        // Load services
+        repo.getServicesOfSalon(salonId, new FirebaseRepo.FirebaseCallback<List<Service>>() {
+            @Override
+            public void onSuccess(List<Service> services) {
+                serviceAdapter.setServiceList(services);
+            }
 
-    private List<Service> createMockServices() {
-        List<Service> services = new ArrayList<>();
-        services.add(new Service("sv1", "Cắt tóc nam", 100000));
-        services.add(new Service("sv2", "Cắt tóc nữ", 150000));
-        services.add(new Service("sv3", "Uốn tóc", 300000));
-        services.add(new Service("sv4", "Nhuộm tóc", 400000));
-        services.add(new Service("sv5", "Phục hồi tóc", 250000));
-        services.add(new Service("sv6", "Tạo kiểu", 200000));
-        return services;
-    }
+            @Override
+            public void onFailure(Exception e) { /* ignore */ }
+        });
 
-    private List<Stylist> createMockStylists() {
-        List<Stylist> stylists = new ArrayList<>();
-        stylists.add(new Stylist("st1", "Nguyễn Văn A", salonId, "", "Chuyên cắt tóc nam"));
-        stylists.add(new Stylist("st2", "Trần Thị B", salonId, "", "Chuyên nhuộm tóc"));
-        stylists.add(new Stylist("st3", "Lê Văn C", salonId, "", "Chuyên tạo kiểu"));
-        stylists.add(new Stylist("st4", "Phạm Thị D", salonId, "", "Chuyên uốn tóc"));
-        return stylists;
+        // Load stylists
+        repo.getStylistsOfSalon(salonId, new FirebaseRepo.FirebaseCallback<List<Stylist>>() {
+            @Override
+            public void onSuccess(List<Stylist> stylists) {
+                stylistAdapter.setStylistList(stylists);
+            }
+
+            @Override
+            public void onFailure(Exception e) { /* ignore */ }
+        });
     }
 }

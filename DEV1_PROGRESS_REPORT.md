@@ -13,6 +13,7 @@
 ### 🔐 Module Authentication
 
 #### 1. SplashActivity ✅ **HOÀN THÀNH**
+
 - **UI**: Luxury salon style với gradient nâu nhạt + vàng ánh kim
 - **Animations**: Logo fade in + scale, text slide up với stagger delay
 - **Logic**: ✅ Kiểm tra đăng nhập → navigate đến Home hoặc Login
@@ -20,6 +21,7 @@
 - **File**: `SplashActivity.java` ✅
 
 #### 2. LoginActivity ✅ **UI HOÀN CHỈNH**
+
 - **UI**: Luxury salon style với toolbar nâu nhạt
 - **Validate**: ✅ Validate input (email, password không rỗng)
 - **Logic BE**: ⚠️ Chưa có - có TODO comment (cần implement Firebase login)
@@ -28,6 +30,7 @@
 - **File**: `LoginActivity.java` ✅
 
 #### 3. RegisterActivity ✅ **UI HOÀN CHỈNH**
+
 - **UI**: Luxury salon style với toolbar nâu nhạt
 - **Validate**: ✅ Validate input (name, email, password không rỗng)
 - **Logic BE**: ⚠️ Chưa có - có TODO comment (cần implement Firebase register)
@@ -38,6 +41,7 @@
 ### 🔍 Module Discovery
 
 #### 4. HomeActivity ✅ **UI HOÀN CHỈNH**
+
 - **UI**: Luxury salon style với welcome card gradient, search box kem beige
 - **Features**:
   - ✅ RecyclerView hiển thị danh sách salon (dùng mock data)
@@ -50,6 +54,7 @@
 - **File**: `HomeActivity.java` ✅
 
 #### 5. SalonListActivity ✅ **UI HOÀN CHỈNH**
+
 - **UI**: Luxury salon style với search box, results count
 - **Features**:
   - ✅ RecyclerView hiển thị danh sách salon (dùng mock data)
@@ -63,6 +68,7 @@
 - **File**: `SalonListActivity.java` ✅
 
 #### 6. SalonDetailActivity ✅ **UI HOÀN CHỈNH**
+
 - **UI**: Luxury salon style với CollapsingToolbarLayout, premium badge
 - **Features**:
   - ✅ CollapsingToolbar với hình ảnh salon + parallax scroll
@@ -70,7 +76,7 @@
   - ✅ RecyclerView services (dùng mock data)
   - ✅ RecyclerView stylists (dùng mock data)
   - ✅ FAB button "Đặt Lịch Ngay" màu vàng ánh kim → navigate đến BookingActivity
-- **Adapters**: 
+- **Adapters**:
   - `ServiceDetailAdapter.java` ✅
   - `StylistDetailAdapter.java` ✅
 - **Logic BE**: ⚠️ Chưa có - đang dùng mock data (cần FirebaseRepo methods)
@@ -82,6 +88,7 @@
 ## 🎨 Layout Files & Adapters
 
 ### Layout Files ✅ **TẤT CẢ ĐÃ CÓ**
+
 - ✅ `activity_splash.xml` - Luxury style với gradient và animations
 - ✅ `activity_login.xml` - Luxury style
 - ✅ `activity_register.xml` - Luxury style
@@ -93,11 +100,13 @@
 - ✅ `item_stylist_detail.xml` - Luxury style card với avatar
 
 ### Adapters ✅ **TẤT CẢ ĐÃ CÓ**
+
 - ✅ `SalonAdapter.java` - Adapter cho salon list
 - ✅ `ServiceDetailAdapter.java` - Adapter cho services trong detail
 - ✅ `StylistDetailAdapter.java` - Adapter cho stylists trong detail
 
 ### Drawable Files ✅
+
 - ✅ `gradient_luxury_welcome.xml`
 - ✅ `gradient_luxury_salon_card.xml`
 - ✅ `gradient_luxury_soft_black_gold.xml`
@@ -115,25 +124,30 @@
 ## ⚠️ Phần Chưa Hoàn Thành (Cần Backend)
 
 ### Các TODO Comments
+
 1. **LoginActivity**: Cần implement Firebase login
+
    ```java
    // TODO: Implement login logic using FirebaseRepo
    // repo.login(email, password, new FirebaseRepo.FirebaseCallback<FirebaseUser>() {...});
    ```
 
 2. **RegisterActivity**: Cần implement Firebase register
+
    ```java
    // TODO: Implement register logic using FirebaseRepo
    // repo.register(email, password, name, new FirebaseRepo.FirebaseCallback<FirebaseUser>() {...});
    ```
 
 3. **HomeActivity**: Cần load data từ Firebase
+
    ```java
    // TODO: Load salons from FirebaseRepo
    // repo.getAllSalons(new FirebaseRepo.FirebaseCallback<List<Salon>>() {...});
    ```
 
 4. **SalonListActivity**: Cần load data từ Firebase
+
    ```java
    // TODO: Load salons from FirebaseRepo
    // repo.getAllSalons(new FirebaseRepo.FirebaseCallback<List<Salon>>() {...});
@@ -152,6 +166,7 @@
 ## 📊 Tóm Tắt
 
 ### ✅ Đã Hoàn Thành (100% UI)
+
 - [x] 6 màn hình với UI luxury salon style
 - [x] Tất cả layout files
 - [x] Tất cả adapters
@@ -162,6 +177,7 @@
 - [x] Style theme nhất quán (vàng ánh kim, trắng kem, nâu nhạt)
 
 ### ⚠️ Chưa Hoàn Thành (Cần Backend)
+
 - [ ] Kết nối Firebase Authentication (Login, Register)
 - [ ] Load salons từ Firestore
 - [ ] Load services từ Firestore
@@ -172,7 +188,7 @@
 
 ## 🎯 Kết Luận
 
-**Dev 1 đã hoàn thành 100% phần UI** cho tất cả 6 màn hình trong module Authentication & Discovery. 
+**Dev 1 đã hoàn thành 100% phần UI** cho tất cả 6 màn hình trong module Authentication & Discovery.
 
 **Phần còn lại**: Chỉ cần thay thế mock data bằng các lời gọi FirebaseRepo khi backend sẵn sàng. Code đã được chuẩn bị sẵn với TODO comments rõ ràng để dễ dàng implement sau.
 
@@ -181,4 +197,3 @@
 ---
 
 **Cập nhật**: 02/11/2025
-

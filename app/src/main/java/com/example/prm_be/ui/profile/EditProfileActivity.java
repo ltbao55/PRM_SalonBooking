@@ -76,12 +76,36 @@ public class EditProfileActivity extends AppCompatActivity {
                 return;
             }
 
-            // Update user
+            // Update user name trước
             currentUser.setName(name);
-            
-            // TODO: Upload avatar image to Firebase Storage if selectedImageUri != null
-            // For now, just update name
-            updateUserProfile();
+
+            // Nếu có chọn ảnh, upload lên Storage, lấy URL rồi cập nhật user
+            if (selectedImageUri != null) {
+                FirebaseUser firebaseUser = repo.getCurrentUser();
+                if (firebaseUser == null) {
+                    Toast.makeText(this, "Vui lòng đăng nhập", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                btnSave.setEnabled(false);
+                btnSave.setText("Đang lưu...");
+                repo.uploadProfileImage(selectedImageUri, firebaseUser.getUid(), new FirebaseRepo.FirebaseCallback<String>() {
+                    @Override
+                    public void onSuccess(String url) {
+                        currentUser.setAvatarUrl(url);
+                        updateUserProfile();
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+                        btnSave.setEnabled(true);
+                        btnSave.setText("Lưu");
+                        Toast.makeText(EditProfileActivity.this, "Upload ảnh thất bại: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } else {
+                // Không có ảnh mới, chỉ cập nhật tên
+                updateUserProfile();
+            }
         });
     }
 
