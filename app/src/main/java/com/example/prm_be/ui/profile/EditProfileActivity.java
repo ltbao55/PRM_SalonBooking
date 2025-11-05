@@ -33,6 +33,12 @@ public class EditProfileActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        // Check if user is regular user (block staff/admin)
+        if (!com.example.prm_be.utils.RoleGuard.checkUserRoleOnlySync(this)) {
+            return;
+        }
+        
         setContentView(R.layout.activity_edit_profile);
 
         repo = FirebaseRepo.getInstance();
@@ -48,6 +54,9 @@ public class EditProfileActivity extends AppCompatActivity {
         initViews();
         setupClickListeners();
         loadUserData();
+        
+        // Do async role check
+        com.example.prm_be.utils.RoleGuard.checkUserRoleOnly(this);
     }
 
     private void initViews() {

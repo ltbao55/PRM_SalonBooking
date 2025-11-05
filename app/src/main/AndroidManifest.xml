@@ -72,6 +72,49 @@
         <activity
             android:name=".MainActivity"
             android:exported="false" />
+        
+        <!-- Role-based placeholder screens -->
+        <activity
+            android:name=".ui.staff.StaffHomeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.staff.StaffScheduleActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.staff.StaffProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.staff.StaffEditProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.staff.StaffServicesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.admin.AdminDashboardActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.admin.AdminAllSchedulesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.admin.AdminUsersActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.admin.AdminReportsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.admin.AdminServicesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.admin.AdminSalonsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.admin.AdminWorkingHoursActivity"
+            android:exported="false" />
+
+        <!-- Dev tools activity for seeding test accounts -->
+        <activity
+            android:name=".ui.dev.DevToolsActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

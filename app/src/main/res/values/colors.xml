@@ -43,6 +43,8 @@
     <color name="text_light">#FFFFFF</color>
     <color name="text_gold">#C9A961</color>
     <color name="text_cream">#F5F5DC</color>
+    <!-- Alias cho layout mới -->
+    <color name="soft_brown">#6B5240</color>
     
     <!-- Status Colors -->
     <color name="success">#10B981</color>

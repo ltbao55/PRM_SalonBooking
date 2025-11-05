@@ -4,25 +4,22 @@
     android:id="@+id/cardTimeSlot"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginEnd="8dp"
-    android:layout_marginBottom="8dp"
+    android:layout_margin="4dp"
     app:cardCornerRadius="8dp"
-    app:cardElevation="2dp">
+    app:cardElevation="2dp"
+    app:strokeWidth="0dp">
 
     <TextView
         android:id="@+id/tvTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:paddingTop="12dp"
-        android:paddingBottom="12dp"
+        android:padding="12dp"
         android:text="09:00"
-        android:textColor="@color/text_primary"
         android:textSize="14sp"
         android:textStyle="bold"
-        android:minWidth="80dp"
-        android:gravity="center" />
+        android:gravity="center"
+        android:minWidth="80dp" />
 
 </com.google.android.material.card.MaterialCardView>
+
 

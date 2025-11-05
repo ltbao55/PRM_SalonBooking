@@ -32,6 +32,12 @@ public class BookingSuccessActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        // Check if user is regular user (block staff/admin)
+        if (!com.example.prm_be.utils.RoleGuard.checkUserRoleOnlySync(this)) {
+            return;
+        }
+        
         setContentView(R.layout.activity_booking_success);
 
         repo = FirebaseRepo.getInstance();
@@ -40,6 +46,9 @@ public class BookingSuccessActivity extends AppCompatActivity {
         initViews();
         setupClickListeners();
         loadBookingDetails();
+        
+        // Do async role check
+        com.example.prm_be.utils.RoleGuard.checkUserRoleOnly(this);
     }
 
     private void initViews() {

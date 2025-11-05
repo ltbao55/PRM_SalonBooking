@@ -69,6 +69,10 @@ public class TimeSlotAdapter extends RecyclerView.Adapter<TimeSlotAdapter.TimeSl
         notifyDataSetChanged();
     }
 
+    public List<TimeSlot> getTimeSlotList() {
+        return timeSlotList != null ? timeSlotList : new ArrayList<>();
+    }
+
     public void setBookedSlots(List<String> bookedSlots) {
         this.bookedSlots = bookedSlots != null ? bookedSlots : new ArrayList<>();
         // Update availability
@@ -110,7 +114,7 @@ public class TimeSlotAdapter extends RecyclerView.Adapter<TimeSlotAdapter.TimeSl
     @Override
     public TimeSlotViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_time_slot, parent, false);
+                .inflate(R.layout.item_booking_time_slot, parent, false);
         return new TimeSlotViewHolder(view);
     }
 

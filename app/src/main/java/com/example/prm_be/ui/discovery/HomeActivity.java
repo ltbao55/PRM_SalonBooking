@@ -40,6 +40,12 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        // Check if user is regular user (block staff/admin)
+        if (!com.example.prm_be.utils.RoleGuard.checkUserRoleOnlySync(this)) {
+            return;
+        }
+        
         setContentView(R.layout.activity_home);
 
         initViews();
@@ -48,6 +54,9 @@ public class HomeActivity extends AppCompatActivity {
         setupSearchView();
         setupViewAllButton();
         loadSalonsFromFirebase();
+        
+        // Do async role check
+        com.example.prm_be.utils.RoleGuard.checkUserRoleOnly(this);
     }
     
     private void setupViewAllButton() {
