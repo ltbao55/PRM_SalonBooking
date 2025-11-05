@@ -1,6 +1,7 @@
 package com.example.prm_be.ui.profile;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
@@ -11,6 +12,9 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
  */
 public class BookingHistoryPagerAdapter extends FragmentStateAdapter {
 
+    // Lưu reference fragment theo position để Activity có thể cập nhật dữ liệu chắc chắn
+    private final java.util.Map<Integer, Fragment> positionToFragment = new java.util.HashMap<>();
+
     public BookingHistoryPagerAdapter(@NonNull FragmentActivity fragmentActivity) {
         super(fragmentActivity);
     }
@@ -18,18 +22,24 @@ public class BookingHistoryPagerAdapter extends FragmentStateAdapter {
     @NonNull
     @Override
     public Fragment createFragment(int position) {
+        Fragment fragment;
         if (position == 0) {
-            // Tab 1: Sắp tới
-            return BookingListFragment.newInstance(BookingListFragment.FILTER_UPCOMING);
+            fragment = BookingListFragment.newInstance(BookingListFragment.FILTER_UPCOMING);
         } else {
-            // Tab 2: Đã hoàn thành
-            return BookingListFragment.newInstance(BookingListFragment.FILTER_COMPLETED);
+            fragment = BookingListFragment.newInstance(BookingListFragment.FILTER_COMPLETED);
         }
+        positionToFragment.put(position, fragment);
+        return fragment;
     }
 
     @Override
     public int getItemCount() {
         return 2; // 2 tabs
+    }
+
+    @Nullable
+    public Fragment getFragmentAt(int position) {
+        return positionToFragment.get(position);
     }
 }
 

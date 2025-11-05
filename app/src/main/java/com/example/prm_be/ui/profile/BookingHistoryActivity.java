@@ -64,6 +64,17 @@ public class BookingHistoryActivity extends AppCompatActivity {
         // Setup ViewPager2 with adapter
         pagerAdapter = new BookingHistoryPagerAdapter(this);
         viewPager.setAdapter(pagerAdapter);
+
+        // Khi chuyển tab, đảm bảo fragment hiện tại nhận dữ liệu mới nhất
+        viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                if (allBookings != null) {
+                    updateFragmentAtPosition(position, allBookings);
+                }
+            }
+        });
     }
 
     private void setupTabs() {
@@ -107,6 +118,11 @@ public class BookingHistoryActivity extends AppCompatActivity {
         });
     }
 
+    // Cho fragments lấy dữ liệu hiện có nếu cần đồng bộ khi được tạo/hiển thị
+    public List<Booking> getCurrentBookingsForFragments() {
+        return allBookings;
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -123,24 +139,27 @@ public class BookingHistoryActivity extends AppCompatActivity {
         
         // Update fragment at position 1 (Completed)
         updateFragmentAtPosition(1, bookings);
+
+        // Đảm bảo tab hiện tại luôn có dữ liệu mới nhất
+        updateFragmentAtPosition(currentItem, bookings);
     }
 
     private void updateFragmentAtPosition(int position, List<Booking> bookings) {
-        // Get fragment at specific position using ViewPager2
-        Fragment fragment = null;
-        try {
-            long itemId = pagerAdapter.getItemId(position);
-            String tag = "f" + itemId;
-            fragment = getSupportFragmentManager().findFragmentByTag(tag);
-        } catch (Exception e) {
-            // Fallback: try to find by position
-            if (position < getSupportFragmentManager().getFragments().size()) {
-                fragment = getSupportFragmentManager().getFragments().get(position);
-            }
-        }
-
+        // Lấy fragment từ adapter (đã lưu reference) để tránh lỗi tìm tag
+        Fragment fragment = pagerAdapter.getFragmentAt(position);
         if (fragment instanceof BookingListFragment) {
             ((BookingListFragment) fragment).setBookings(bookings);
+            return;
         }
+        // Fallback: thử tìm trong FragmentManager (trường hợp hệ thống recreate)
+        try {
+            java.util.List<Fragment> fragments = getSupportFragmentManager().getFragments();
+            if (position < fragments.size()) {
+                Fragment fmFragment = fragments.get(position);
+                if (fmFragment instanceof BookingListFragment) {
+                    ((BookingListFragment) fmFragment).setBookings(bookings);
+                }
+            }
+        } catch (Exception ignored) { }
     }
 }
