@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.prm_be.R;
 import com.example.prm_be.data.FirebaseRepo;
 import com.example.prm_be.ui.auth.LoginActivity;
-import com.example.prm_be.ui.dev.DevToolsActivity;
 import com.example.prm_be.utils.RoleGuard;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
@@ -80,13 +79,7 @@ public class AdminDashboardActivity extends AppCompatActivity {
             });
         }
 
-        // Dev Tools Card
-        MaterialCardView cardDevTools = findViewById(R.id.cardDevTools);
-        if (cardDevTools != null) {
-            cardDevTools.setOnClickListener(v -> {
-                startActivity(new Intent(this, DevToolsActivity.class));
-            });
-        }
+        // Dev Tools removed from Dashboard
 
         // Logout Button
         MaterialButton btnLogout = findViewById(R.id.btnLogout);
