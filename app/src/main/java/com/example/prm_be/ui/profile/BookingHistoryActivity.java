@@ -31,9 +31,18 @@ public class BookingHistoryActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        // Check if user is regular user (block staff/admin)
+        if (!com.example.prm_be.utils.RoleGuard.checkUserRoleOnlySync(this)) {
+            return;
+        }
+        
         setContentView(R.layout.activity_booking_history);
 
         repo = FirebaseRepo.getInstance();
+        
+        // Do async role check
+        com.example.prm_be.utils.RoleGuard.checkUserRoleOnly(this);
 
         // Setup Toolbar
         MaterialToolbar toolbar = findViewById(R.id.toolbar);

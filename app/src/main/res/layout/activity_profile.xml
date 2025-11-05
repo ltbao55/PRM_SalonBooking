@@ -125,6 +125,24 @@
                         android:background="@color/divider" />
 
                     <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnChangePassword"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@android:color/transparent"
+                        android:text="Đổi mật khẩu"
+                        android:textColor="@color/text_primary"
+                        android:textSize="16sp"
+                        style="@style/Widget.MaterialComponents.Button.TextButton"
+                        app:icon="@android:drawable/ic_lock_lock"
+                        app:iconGravity="start"
+                        app:iconTint="@color/primary" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/divider" />
+
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnBookingHistory"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

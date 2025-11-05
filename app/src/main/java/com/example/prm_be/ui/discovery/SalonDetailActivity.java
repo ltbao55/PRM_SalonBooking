@@ -50,9 +50,18 @@ public class SalonDetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        // Check if user is regular user (block staff/admin)
+        if (!com.example.prm_be.utils.RoleGuard.checkUserRoleOnlySync(this)) {
+            return;
+        }
+        
         setContentView(R.layout.activity_salon_detail);
 
         repo = FirebaseRepo.getInstance();
+        
+        // Do async role check
+        com.example.prm_be.utils.RoleGuard.checkUserRoleOnly(this);
         
         salonId = getIntent().getStringExtra(EXTRA_SALON_ID);
         if (salonId == null || salonId.isEmpty()) {

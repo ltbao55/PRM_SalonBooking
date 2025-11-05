@@ -95,3 +95,27 @@ fastlane/test_output
 *.swp
 *.swo
 *~
+
+# ================= Additional ignores (Android) =================
+# All module build directories
+**/build/
+
+# Signing configs / secrets
+signing.properties
+keystore.properties
+app/keystore.properties
+
+# Env/secrets and keys
+.env
+.env.*
+*.pem
+*.p12
+*.key
+*.crt
+
+# Crashlytics/Fabric (if used)
+app/src/main/assets/crashlytics.properties
+app/src/main/assets/fabric.properties
+
+# Google services (cover any location)
+**/google-services.json

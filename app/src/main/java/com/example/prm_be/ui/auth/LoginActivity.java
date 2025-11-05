@@ -19,7 +19,6 @@ import com.example.prm_be.data.models.User;
 import com.example.prm_be.ui.discovery.HomeActivity;
 import com.example.prm_be.ui.staff.StaffHomeActivity;
 import com.example.prm_be.ui.admin.AdminDashboardActivity;
-import com.example.prm_be.ui.dev.DevToolsActivity;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -31,6 +30,7 @@ import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseUser;
 
 public class LoginActivity extends AppCompatActivity {
@@ -59,16 +59,6 @@ public class LoginActivity extends AppCompatActivity {
         // Setup Toolbar
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        if (toolbar != null) {
-            toolbar.inflateMenu(R.menu.menu_login);
-            toolbar.setOnMenuItemClickListener(item -> {
-                if (item.getItemId() == R.id.action_dev_tools) {
-                    startActivity(new Intent(this, DevToolsActivity.class));
-                    return true;
-                }
-                return false;
-            });
-        }
 
         initViews();
         initGoogleSignIn();
@@ -110,7 +100,6 @@ public class LoginActivity extends AppCompatActivity {
         if (btnGoogleSignIn != null) {
             btnGoogleSignIn.setOnClickListener(v -> startGoogleSignIn());
         }
-
 
         tvRegister.setOnClickListener(v -> {
             startActivity(new Intent(this, RegisterActivity.class));
@@ -186,6 +175,17 @@ public class LoginActivity extends AppCompatActivity {
         repo.getUser(uid, new FirebaseRepo.FirebaseCallback<User>() {
             @Override
             public void onSuccess(User user) {
+                // Kiểm tra status của user
+                String status = user.getStatus() != null ? user.getStatus() : "active";
+                
+                if ("disabled".equalsIgnoreCase(status)) {
+                    // Account bị ban/disabled, đăng xuất và hiển thị thông báo
+                    repo.logout();
+                    showErrorMessage("Tài khoản của bạn đã bị vô hiệu hóa. Vui lòng liên hệ admin để được hỗ trợ.");
+                    return;
+                }
+                
+                // Account active, tiếp tục đăng nhập
                 String role = user.getRole() != null ? user.getRole() : "user";
                 navigateByRole(role);
             }
@@ -193,6 +193,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onFailure(Exception e) {
                 // Nếu không lấy được user profile, fallback về Home của user thường
+                // (có thể là user mới chưa có document trong Firestore)
                 navigateByRole("user");
             }
         });
@@ -242,26 +243,69 @@ public class LoginActivity extends AppCompatActivity {
                 showLoading(false);
                 String errorMessage = "Đăng nhập thất bại";
 
-                if (e != null && e.getMessage() != null) {
-                    String errorMsg = e.getMessage();
-                    Log.e("LoginActivity", "Login error: " + errorMsg, e);
+                if (e != null) {
+                    Log.e("LoginActivity", "Login error", e);
 
-                    if (errorMsg.contains("user-not-found")) {
-                        errorMessage = "Email không tồn tại trong hệ thống";
-                    } else if (errorMsg.contains("wrong-password")) {
-                        errorMessage = "Mật khẩu không chính xác";
-                    } else if (errorMsg.contains("invalid-email")) {
-                        errorMessage = "Email không hợp lệ";
-                    } else if (errorMsg.contains("user-disabled")) {
-                        errorMessage = "Tài khoản đã bị vô hiệu hóa";
-                    } else if (errorMsg.contains("network") || errorMsg.contains("network_error")) {
-                        errorMessage = "Lỗi kết nối mạng. Vui lòng kiểm tra internet và thử lại";
+                    // Kiểm tra nếu là FirebaseAuthException để lấy error code chính xác
+                    if (e instanceof FirebaseAuthException) {
+                        FirebaseAuthException authException = (FirebaseAuthException) e;
+                        String errorCode = authException.getErrorCode();
+                        Log.d("LoginActivity", "FirebaseAuthException error code: " + errorCode);
+                        
+                        // Firebase error codes có thể có format khác nhau, kiểm tra cả với và không có prefix ERROR_
+                        switch (errorCode) {
+                            case "ERROR_USER_NOT_FOUND":
+                            case "ERROR_USER_DOES_NOT_EXIST":
+                            case "user-not-found":
+                                errorMessage = "Email không tồn tại trong hệ thống. Vui lòng kiểm tra lại email hoặc đăng ký tài khoản mới.";
+                                break;
+                            case "ERROR_WRONG_PASSWORD":
+                            case "ERROR_INVALID_CREDENTIAL":
+                            case "wrong-password":
+                            case "invalid-credential":
+                                errorMessage = "Mật khẩu không chính xác. Vui lòng kiểm tra lại mật khẩu.";
+                                break;
+                            case "ERROR_INVALID_EMAIL":
+                            case "invalid-email":
+                                errorMessage = "Email không hợp lệ. Vui lòng nhập đúng định dạng email.";
+                                break;
+                            case "ERROR_USER_DISABLED":
+                            case "user-disabled":
+                                errorMessage = "Tài khoản đã bị vô hiệu hóa. Vui lòng liên hệ admin để được hỗ trợ.";
+                                break;
+                            case "ERROR_TOO_MANY_REQUESTS":
+                            case "too-many-requests":
+                                errorMessage = "Quá nhiều lần thử đăng nhập. Vui lòng thử lại sau vài phút.";
+                                break;
+                            case "ERROR_NETWORK_REQUEST_FAILED":
+                            case "ERROR_INTERNAL_ERROR":
+                            case "network-request-failed":
+                                errorMessage = "Lỗi kết nối mạng. Vui lòng kiểm tra internet và thử lại.";
+                                break;
+                            default:
+                                errorMessage = "Đăng nhập thất bại. Vui lòng thử lại sau.";
+                                Log.e("LoginActivity", "Unknown error code: " + errorCode);
+                        }
+                    } else if (e.getMessage() != null) {
+                        String errorMsg = e.getMessage().toLowerCase();
+                        
+                        // Fallback: kiểm tra message nếu không phải FirebaseAuthException
+                        if (errorMsg.contains("user-not-found") || errorMsg.contains("there is no user record")) {
+                            errorMessage = "Email không tồn tại trong hệ thống. Vui lòng kiểm tra lại email hoặc đăng ký tài khoản mới.";
+                        } else if (errorMsg.contains("wrong-password") || errorMsg.contains("password is invalid") || errorMsg.contains("invalid password")) {
+                            errorMessage = "Mật khẩu không chính xác. Vui lòng kiểm tra lại mật khẩu.";
+                        } else if (errorMsg.contains("invalid-email") || errorMsg.contains("invalid email")) {
+                            errorMessage = "Email không hợp lệ. Vui lòng nhập đúng định dạng email.";
+                        } else if (errorMsg.contains("user-disabled") || errorMsg.contains("user account has been disabled")) {
+                            errorMessage = "Tài khoản đã bị vô hiệu hóa. Vui lòng liên hệ admin để được hỗ trợ.";
+                        } else if (errorMsg.contains("network") || errorMsg.contains("network_error") || errorMsg.contains("connection")) {
+                            errorMessage = "Lỗi kết nối mạng. Vui lòng kiểm tra internet và thử lại.";
+                        } else {
+                            errorMessage = "Đăng nhập thất bại: " + e.getMessage();
+                        }
                     } else {
-                        errorMessage = "Đăng nhập thất bại: " + errorMsg;
+                        errorMessage = "Đã xảy ra lỗi. Vui lòng thử lại sau";
                     }
-                } else if (e != null) {
-                    Log.e("LoginActivity", "Login error (no message): " + e.getClass().getName(), e);
-                    errorMessage = "Đã xảy ra lỗi. Vui lòng thử lại sau";
                 }
 
                 showErrorMessage(errorMessage);

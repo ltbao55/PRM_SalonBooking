@@ -10,6 +10,8 @@ public class User {
     private String email;
     private String avatarUrl;
     private String role; // user | staff | admin
+    private String stylistId; // ID của stylist document trong Firestore (nếu user là staff)
+    private String status; // active | disabled
 
     // Default constructor (required for Firestore)
     public User() {
@@ -70,6 +72,22 @@ public class User {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public String getStylistId() {
+        return stylistId;
+    }
+
+    public void setStylistId(String stylistId) {
+        this.stylistId = stylistId;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }
 

@@ -11,9 +11,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.prm_be.R;
 import com.example.prm_be.data.models.Service;
 import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.checkbox.MaterialCheckBox;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Adapter cho RecyclerView hiển thị danh sách Service trong BookingActivity
@@ -22,19 +25,20 @@ public class ServiceBookingAdapter extends RecyclerView.Adapter<ServiceBookingAd
 
     private List<Service> serviceList;
     private OnServiceClickListener listener;
-    private int selectedPosition = -1;
+    private Set<String> selectedServiceIds; // Set để lưu các service ID đã chọn
 
     public interface OnServiceClickListener {
-        void onServiceClick(Service service, int position);
+        void onServiceClick(Service service, int position, boolean isSelected);
     }
 
     public ServiceBookingAdapter() {
         this.serviceList = new ArrayList<>();
+        this.selectedServiceIds = new HashSet<>();
     }
 
     public void setServiceList(List<Service> serviceList) {
         this.serviceList = serviceList != null ? serviceList : new ArrayList<>();
-        selectedPosition = -1;
+        selectedServiceIds.clear();
         notifyDataSetChanged();
     }
 
@@ -42,11 +46,18 @@ public class ServiceBookingAdapter extends RecyclerView.Adapter<ServiceBookingAd
         this.listener = listener;
     }
 
-    public Service getSelectedService() {
-        if (selectedPosition >= 0 && selectedPosition < serviceList.size()) {
-            return serviceList.get(selectedPosition);
+    public List<Service> getSelectedServices() {
+        List<Service> selected = new ArrayList<>();
+        for (Service service : serviceList) {
+            if (selectedServiceIds.contains(service.getId())) {
+                selected.add(service);
+            }
         }
-        return null;
+        return selected;
+    }
+
+    public boolean isServiceSelected(String serviceId) {
+        return selectedServiceIds.contains(serviceId);
     }
 
     @NonNull
@@ -60,7 +71,8 @@ public class ServiceBookingAdapter extends RecyclerView.Adapter<ServiceBookingAd
     @Override
     public void onBindViewHolder(@NonNull ServiceViewHolder holder, int position) {
         Service service = serviceList.get(position);
-        holder.bind(service, position == selectedPosition);
+        boolean isSelected = selectedServiceIds.contains(service.getId());
+        holder.bind(service, isSelected);
     }
 
     @Override
@@ -70,14 +82,18 @@ public class ServiceBookingAdapter extends RecyclerView.Adapter<ServiceBookingAd
 
     class ServiceViewHolder extends RecyclerView.ViewHolder {
         private MaterialCardView cardView;
+        private MaterialCheckBox checkBox;
         private TextView tvServiceName;
         private TextView tvPrice;
+        private TextView tvDuration;
 
         public ServiceViewHolder(@NonNull View itemView) {
             super(itemView);
             cardView = itemView.findViewById(R.id.cardService);
+            checkBox = itemView.findViewById(R.id.checkBoxService);
             tvServiceName = itemView.findViewById(R.id.tvServiceName);
             tvPrice = itemView.findViewById(R.id.tvPrice);
+            tvDuration = itemView.findViewById(R.id.tvDuration);
         }
 
         public void bind(Service service, boolean isSelected) {
@@ -88,6 +104,13 @@ public class ServiceBookingAdapter extends RecyclerView.Adapter<ServiceBookingAd
                 long price = service.getPrice();
                 String priceText = formatPrice(price);
                 tvPrice.setText(priceText);
+
+                // Format duration
+                int duration = service.getDurationInMinutes();
+                tvDuration.setText(duration + " phút");
+
+                // Set checkbox state
+                checkBox.setChecked(isSelected);
 
                 // Highlight selected item
                 if (isSelected) {
@@ -100,21 +123,30 @@ public class ServiceBookingAdapter extends RecyclerView.Adapter<ServiceBookingAd
                 }
 
                 itemView.setOnClickListener(v -> {
-                    int position = getAdapterPosition();
-                    if (position != RecyclerView.NO_POSITION) {
-                        int previousSelected = selectedPosition;
-                        selectedPosition = position;
-                        
-                        if (previousSelected != -1) {
-                            notifyItemChanged(previousSelected);
-                        }
-                        notifyItemChanged(selectedPosition);
-                        
-                        if (listener != null) {
-                            listener.onServiceClick(service, position);
-                        }
-                    }
+                    toggleServiceSelection(service);
                 });
+
+                checkBox.setOnClickListener(v -> {
+                    toggleServiceSelection(service);
+                });
+            }
+        }
+
+        private void toggleServiceSelection(Service service) {
+            int position = getAdapterPosition();
+            if (position == RecyclerView.NO_POSITION) return;
+
+            boolean wasSelected = selectedServiceIds.contains(service.getId());
+            if (wasSelected) {
+                selectedServiceIds.remove(service.getId());
+            } else {
+                selectedServiceIds.add(service.getId());
+            }
+
+            notifyItemChanged(position);
+
+            if (listener != null) {
+                listener.onServiceClick(service, position, !wasSelected);
             }
         }
 

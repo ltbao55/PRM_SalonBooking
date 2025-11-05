@@ -8,7 +8,10 @@ public class Salon {
     private String id;
     private String name;
     private String address;
+    private String phone;
     private String imageUrl;
+    private String description;
+    private double rating;
 
     // Default constructor (required for Firestore)
     public Salon() {
@@ -20,6 +23,17 @@ public class Salon {
         this.name = name;
         this.address = address;
         this.imageUrl = imageUrl;
+        this.rating = 0.0;
+    }
+
+    public Salon(String id, String name, String address, String phone, String imageUrl, String description, double rating) {
+        this.id = id;
+        this.name = name;
+        this.address = address;
+        this.phone = phone;
+        this.imageUrl = imageUrl;
+        this.description = description;
+        this.rating = rating;
     }
 
     // Getters và Setters
@@ -47,12 +61,36 @@ public class Salon {
         this.address = address;
     }
 
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
     public String getImageUrl() {
         return imageUrl;
     }
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public double getRating() {
+        return rating;
+    }
+
+    public void setRating(double rating) {
+        this.rating = rating;
     }
 }
 

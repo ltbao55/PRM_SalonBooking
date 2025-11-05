@@ -1,6 +1,9 @@
 package com.example.prm_be.ui.staff;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -14,6 +17,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.prm_be.R;
 import com.example.prm_be.data.FirebaseRepo;
 import com.example.prm_be.data.models.Booking;
+import com.example.prm_be.ui.auth.LoginActivity;
+import com.example.prm_be.ui.profile.ProfileActivity;
+import com.example.prm_be.utils.RoleGuard;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
@@ -21,10 +27,10 @@ import com.google.android.material.chip.Chip;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
-import android.widget.TextView;
 
 public class StaffScheduleActivity extends AppCompatActivity {
     private MaterialToolbar toolbar;
@@ -39,10 +45,19 @@ public class StaffScheduleActivity extends AppCompatActivity {
     private StaffScheduleAdapter adapter;
     private Calendar currentWeek;
     private SimpleDateFormat weekFormat;
+    
+    // For loading schedule
+    private String currentStylistId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        // Check staff role
+        if (!RoleGuard.checkRoleSync(this, "staff")) {
+            return;
+        }
+        
         setContentView(R.layout.activity_staff_schedule);
 
         repo = FirebaseRepo.getInstance();
@@ -53,6 +68,7 @@ public class StaffScheduleActivity extends AppCompatActivity {
         setupRecyclerView();
         setupToolbar();
         setupWeekNavigation();
+        setupLogoutButton();
         loadSchedule();
     }
 
@@ -72,6 +88,37 @@ public class StaffScheduleActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
         toolbar.setNavigationOnClickListener(v -> finish());
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_staff, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_profile) {
+            startActivity(new android.content.Intent(this, StaffProfileActivity.class));
+            return true;
+        } else if (item.getItemId() == R.id.action_services) {
+            startActivity(new android.content.Intent(this, StaffServicesActivity.class));
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void setupLogoutButton() {
+        MaterialButton btnLogout = findViewById(R.id.btnLogout);
+        if (btnLogout != null) {
+            btnLogout.setOnClickListener(v -> {
+                FirebaseRepo.getInstance().logout();
+                Intent intent = new Intent(this, LoginActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                finish();
+            });
+        }
     }
 
     private void setupRecyclerView() {
@@ -127,8 +174,34 @@ public class StaffScheduleActivity extends AppCompatActivity {
             return;
         }
 
-        String staffId = currentUser.getUid(); // Assume staffId = userId for now
-        
+        // Lấy User document để lấy stylistId
+        repo.getUser(currentUser.getUid(), new FirebaseRepo.FirebaseCallback<com.example.prm_be.data.models.User>() {
+            @Override
+            public void onSuccess(com.example.prm_be.data.models.User user) {
+                String stylistId = user.getStylistId();
+                if (stylistId == null || stylistId.isEmpty()) {
+                    Toast.makeText(StaffScheduleActivity.this, 
+                        "Tài khoản staff chưa được liên kết với stylist. Vui lòng liên hệ admin.", 
+                        Toast.LENGTH_LONG).show();
+                    updateEmptyState(true);
+                    return;
+                }
+                
+                currentStylistId = stylistId;
+                loadScheduleByStylistId(stylistId);
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Toast.makeText(StaffScheduleActivity.this, 
+                    "Không thể lấy thông tin user: " + (e != null ? e.getMessage() : "unknown"), 
+                    Toast.LENGTH_SHORT).show();
+                updateEmptyState(true);
+            }
+        });
+    }
+
+    private void loadScheduleByStylistId(String stylistId) {
         // Calculate week start and end timestamps
         Calendar startOfWeek = (Calendar) currentWeek.clone();
         startOfWeek.set(Calendar.DAY_OF_WEEK, startOfWeek.getFirstDayOfWeek());
@@ -148,7 +221,7 @@ public class StaffScheduleActivity extends AppCompatActivity {
         long endTimestamp = endOfWeek.getTimeInMillis();
 
         showLoading(true);
-        repo.getStaffSchedule(staffId, startTimestamp, endTimestamp, new FirebaseRepo.FirebaseCallback<List<Booking>>() {
+        repo.getStaffSchedule(stylistId, startTimestamp, endTimestamp, new FirebaseRepo.FirebaseCallback<List<Booking>>() {
             @Override
             public void onSuccess(List<Booking> bookings) {
                 showLoading(false);
@@ -192,6 +265,10 @@ public class StaffScheduleActivity extends AppCompatActivity {
         TextView tvDetailCustomerName = bottomSheetView.findViewById(R.id.tvDetailCustomerName);
         TextView tvDetailDateTime = bottomSheetView.findViewById(R.id.tvDetailDateTime);
         Chip chipDetailStatus = bottomSheetView.findViewById(R.id.chipDetailStatus);
+        LinearLayout llActionButtons = bottomSheetView.findViewById(R.id.llActionButtons);
+        MaterialButton btnStartBooking = bottomSheetView.findViewById(R.id.btnStartBooking);
+        MaterialButton btnCompleteBooking = bottomSheetView.findViewById(R.id.btnCompleteBooking);
+        MaterialButton btnCancelBooking = bottomSheetView.findViewById(R.id.btnCancelBooking);
 
         // Format date/time
         SimpleDateFormat dateTimeFormat = new SimpleDateFormat("dd/MM/yyyy - HH:mm", Locale.getDefault());
@@ -200,8 +277,57 @@ public class StaffScheduleActivity extends AppCompatActivity {
 
         // Status
         String status = booking.getStatus();
+        if (status == null) {
+            status = "pending";
+        }
         chipDetailStatus.setText(getStatusText(status));
         chipDetailStatus.setChipBackgroundColorResource(getStatusColor(status));
+
+        // Show/hide action buttons based on status
+        llActionButtons.setVisibility(View.VISIBLE);
+        btnStartBooking.setVisibility(View.GONE);
+        btnCompleteBooking.setVisibility(View.GONE);
+        btnCancelBooking.setVisibility(View.GONE);
+
+        // Action buttons logic
+        switch (status.toLowerCase()) {
+            case "pending":
+                // Pending: Can confirm (start) or cancel
+                btnStartBooking.setVisibility(View.VISIBLE);
+                btnStartBooking.setText("Xác nhận");
+                btnCancelBooking.setVisibility(View.VISIBLE);
+                break;
+            case "confirmed":
+                // Confirmed: Can complete or cancel
+                btnCompleteBooking.setVisibility(View.VISIBLE);
+                btnCancelBooking.setVisibility(View.VISIBLE);
+                break;
+            case "completed":
+            case "cancelled":
+                // Completed/Cancelled: No actions available
+                llActionButtons.setVisibility(View.GONE);
+                break;
+        }
+
+        // Button listeners
+        btnStartBooking.setOnClickListener(v -> {
+            updateBookingStatus(booking.getId(), "confirmed", bottomSheet);
+        });
+
+        btnCompleteBooking.setOnClickListener(v -> {
+            updateBookingStatus(booking.getId(), "completed", bottomSheet);
+        });
+
+        btnCancelBooking.setOnClickListener(v -> {
+            new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Hủy lịch hẹn")
+                .setMessage("Bạn có chắc chắn muốn hủy lịch hẹn này?")
+                .setPositiveButton("Hủy", (d, w) -> {
+                    updateBookingStatus(booking.getId(), "cancelled", bottomSheet);
+                })
+                .setNegativeButton("Không", null)
+                .show();
+        });
 
         // Load salon name, service name, customer name
         tvDetailSalonName.setText("Đang tải...");
@@ -254,6 +380,24 @@ public class StaffScheduleActivity extends AppCompatActivity {
         });
 
         bottomSheet.show();
+    }
+
+    private void updateBookingStatus(String bookingId, String newStatus, BottomSheetDialog bottomSheet) {
+        repo.updateBookingStatus(bookingId, newStatus, new FirebaseRepo.FirebaseCallback<Void>() {
+            @Override
+            public void onSuccess(Void result) {
+                Toast.makeText(StaffScheduleActivity.this, "Đã cập nhật trạng thái thành công", Toast.LENGTH_SHORT).show();
+                bottomSheet.dismiss();
+                loadSchedule(); // Reload schedule
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Toast.makeText(StaffScheduleActivity.this,
+                    "Không thể cập nhật trạng thái: " + (e != null ? e.getMessage() : "Lỗi không xác định"),
+                    Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private String getStatusText(String status) {

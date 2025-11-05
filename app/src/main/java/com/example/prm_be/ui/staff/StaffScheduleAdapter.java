@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.prm_be.R;
+import com.example.prm_be.data.FirebaseRepo;
 import com.example.prm_be.data.models.Booking;
 import com.google.android.material.chip.Chip;
 
@@ -22,6 +23,7 @@ public class StaffScheduleAdapter extends RecyclerView.Adapter<StaffScheduleAdap
     private List<Booking> bookings;
     private OnBookingClickListener listener;
     private SimpleDateFormat dateTimeFormat;
+    private FirebaseRepo repo;
 
     public interface OnBookingClickListener {
         void onBookingClick(Booking booking);
@@ -31,11 +33,16 @@ public class StaffScheduleAdapter extends RecyclerView.Adapter<StaffScheduleAdap
         this.bookings = new ArrayList<>();
         this.listener = listener;
         this.dateTimeFormat = new SimpleDateFormat("dd/MM/yyyy - HH:mm", Locale.getDefault());
+        this.repo = FirebaseRepo.getInstance();
     }
 
     public void setBookings(List<Booking> bookings) {
         this.bookings = bookings != null ? bookings : new ArrayList<>();
         notifyDataSetChanged();
+    }
+
+    public List<Booking> getBookings() {
+        return bookings;
     }
 
     @NonNull
@@ -89,13 +96,63 @@ public class StaffScheduleAdapter extends RecyclerView.Adapter<StaffScheduleAdap
             chipStatus.setText(getStatusText(status));
             chipStatus.setChipBackgroundColorResource(getStatusColor(status));
 
-            // Placeholder texts (will be loaded from Firestore)
+            // Load salon name
             tvSalonName.setText("Đang tải...");
-            tvServiceName.setText("Đang tải...");
-            tvCustomerName.setText("Đang tải...");
+            repo.getSalonById(booking.getSalonId(), new FirebaseRepo.FirebaseCallback<com.example.prm_be.data.models.Salon>() {
+                @Override
+                public void onSuccess(com.example.prm_be.data.models.Salon salon) {
+                    if (salon != null) {
+                        tvSalonName.setText(salon.getName());
+                    } else {
+                        tvSalonName.setText("Không tìm thấy salon");
+                    }
+                }
 
-            // TODO: Load salon name, service name, customer name from Firestore
-            // This will be done in StaffScheduleActivity when we have the booking data
+                @Override
+                public void onFailure(Exception e) {
+                    tvSalonName.setText("Không tìm thấy salon");
+                }
+            });
+
+            // Load service name
+            tvServiceName.setText("Đang tải...");
+            repo.getServicesOfSalon(booking.getSalonId(), new FirebaseRepo.FirebaseCallback<List<com.example.prm_be.data.models.Service>>() {
+                @Override
+                public void onSuccess(List<com.example.prm_be.data.models.Service> services) {
+                    if (services != null) {
+                        for (com.example.prm_be.data.models.Service service : services) {
+                            if (service.getId().equals(booking.getServiceId())) {
+                                tvServiceName.setText("Dịch vụ: " + service.getName());
+                                return;
+                            }
+                        }
+                    }
+                    tvServiceName.setText("Không tìm thấy dịch vụ");
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+                    tvServiceName.setText("Không tìm thấy dịch vụ");
+                }
+            });
+
+            // Load customer name
+            tvCustomerName.setText("Đang tải...");
+            repo.getUser(booking.getUserId(), new FirebaseRepo.FirebaseCallback<com.example.prm_be.data.models.User>() {
+                @Override
+                public void onSuccess(com.example.prm_be.data.models.User user) {
+                    if (user != null) {
+                        tvCustomerName.setText("Khách hàng: " + user.getName());
+                    } else {
+                        tvCustomerName.setText("Không tìm thấy khách hàng");
+                    }
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+                    tvCustomerName.setText("Không tìm thấy khách hàng");
+                }
+            });
         }
 
         private String getStatusText(String status) {

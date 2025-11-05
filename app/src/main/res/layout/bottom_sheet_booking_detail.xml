@@ -110,6 +110,45 @@
         app:chipMinHeight="32dp"
         android:layout_marginBottom="20dp" />
 
+    <!-- Action Buttons (for staff) -->
+    <LinearLayout
+        android:id="@+id/llActionButtons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp"
+        android:visibility="gone">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnStartBooking"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Bắt đầu"
+            android:layout_marginEnd="8dp"
+            app:backgroundTint="@color/success" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCompleteBooking"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Hoàn thành"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            app:backgroundTint="@color/info" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCancelBooking"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Hủy"
+            android:layout_marginStart="8dp"
+            app:backgroundTint="@color/error" />
+
+    </LinearLayout>
+
     <!-- Gold Accent Line -->
     <View
         android:layout_width="match_parent"
