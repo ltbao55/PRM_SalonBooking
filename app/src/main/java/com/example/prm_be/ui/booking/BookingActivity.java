@@ -183,6 +183,13 @@ public class BookingActivity extends AppCompatActivity {
             return false;
         }
 
+        // Không cho đặt lịch ở quá khứ
+        long now = System.currentTimeMillis();
+        if (selectedTimeSlot.getTimestamp() < now) {
+            Toast.makeText(this, "Không thể đặt lịch ở thời điểm đã qua", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
         // Check if selected slot has enough time for all services
         int totalDuration = calculateTotalDuration();
         if (!hasEnoughSlots(selectedTimeSlot, totalDuration)) {
@@ -477,10 +484,17 @@ public class BookingActivity extends AppCompatActivity {
         Log.d("BookingDebug", "Marking booked slots - total slots: " + timeSlots.size() + ", total bookings: " + bookings.size());
         
         // Với mỗi slot, check xem có booking nào overlap không
+        long now = System.currentTimeMillis();
         for (TimeSlotAdapter.TimeSlot slot : timeSlots) {
             long slotStartTime = slot.getTimestamp();
             long slotEndTime = slotStartTime + (slotDurationMinutes * 60 * 1000L); // Convert minutes to milliseconds
             
+            // Giữ nguyên trạng thái unavailable cho các slot ở quá khứ
+            if (slotStartTime < now) {
+                slot.setAvailable(false);
+                continue;
+            }
+
             boolean isBooked = false;
             Booking matchedBooking = null;
             

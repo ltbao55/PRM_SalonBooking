@@ -71,6 +71,18 @@ public class BookingListFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Nếu activity đã có dữ liệu tổng, đồng bộ lại để tránh trường hợp fragment được tạo sau khi data về
+        if (getActivity() instanceof BookingHistoryActivity) {
+            java.util.List<Booking> latest = ((BookingHistoryActivity) getActivity()).getCurrentBookingsForFragments();
+            if (latest != null && !latest.equals(allBookings)) {
+                setBookings(latest);
+            }
+        }
+    }
+
     private void setupRecyclerView() {
         bookingAdapter = new BookingAdapter();
         rvBookings.setLayoutManager(new LinearLayoutManager(getContext()));
