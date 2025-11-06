@@ -9,7 +9,7 @@ import com.google.firebase.FirebaseApp;
 /**
  * Application class để khởi tạo Firebase và tự động seed data
  */
-public class PRMApplication extends Application {
+public class    PRMApplication extends Application {
     
     @Override
     public void onCreate() {

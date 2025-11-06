@@ -24,7 +24,10 @@ import java.util.List;
 
 /**
  * HomeActivity - Màn hình chính hiển thị danh sách salon
- * Hiện tại chỉ code UI, chưa có logic kết nối BE
+ * Chức năng:
+ * - Load danh sách salon từ Firebase
+ * - Click salon để xem chi tiết
+ * - Tìm kiếm salon (chuyển đến SalonListActivity)
  */
 public class HomeActivity extends AppCompatActivity {
 
@@ -84,10 +87,14 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Setup RecyclerView để hiển thị danh sách salon
+     * Click vào salon -> Chuyển đến SalonDetailActivity để xem chi tiết
+     */
     private void setupRecyclerView() {
         salonAdapter = new SalonAdapter();
         salonAdapter.setOnSalonClickListener(salon -> {
-            // Navigate to SalonDetailActivity
+            // Click salon -> Chuyển đến màn hình chi tiết salon
             Intent intent = new Intent(HomeActivity.this, SalonDetailActivity.class);
             intent.putExtra(SalonDetailActivity.EXTRA_SALON_ID, salon.getId());
             startActivity(intent);
@@ -116,25 +123,24 @@ public class HomeActivity extends AppCompatActivity {
         edtSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                // Chưa có logic search, sẽ implement sau khi có BE
+                // Search được xử lý ở SalonListActivity
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                // Chưa có logic search, sẽ implement sau khi có BE
-                // TODO: Filter salon list based on search query
+                // Search được xử lý ở SalonListActivity
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-                // Chưa có logic search, sẽ implement sau khi có BE
+                // Search được xử lý ở SalonListActivity
             }
         });
     }
 
     /**
-     * Load mock data để preview UI
-     * Sẽ được thay thế bằng FirebaseRepo.getAllSalons() sau khi có BE
+     * Load danh sách salon từ Firebase
+     * Nếu không có dữ liệu thì dùng demo data để preview UI
      */
     private void loadSalonsFromFirebase() {
         com.example.prm_be.data.FirebaseRepo repo = com.example.prm_be.data.FirebaseRepo.getInstance();
@@ -148,7 +154,7 @@ public class HomeActivity extends AppCompatActivity {
                 }
                 displayedSalonList = new ArrayList<>(originalSalonList);
                 salonAdapter.setSalonList(displayedSalonList);
-                updateEmptyState();
+                updateEmptyState(); // Hiển thị/ẩn empty state
             }
 
             @Override

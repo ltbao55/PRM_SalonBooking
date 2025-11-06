@@ -12,6 +12,10 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.prm_be.data.FirebaseRepo;
 import com.example.prm_be.ui.auth.LoginActivity;
 
+/**
+ * MainActivity - Entry point của app
+ * Chức năng: Kiểm tra đăng nhập và điều hướng đến màn hình phù hợp
+ */
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -30,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         
+        // Đã đăng nhập -> Hiển thị màn hình chính
         setContentView(R.layout.activity_main);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());

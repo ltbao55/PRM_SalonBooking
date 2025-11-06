@@ -86,6 +86,10 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Load thông tin user từ Firebase và hiển thị
+     * - Ẩn nút "Lịch sử đặt lịch" nếu user là staff/admin
+     */
     private void loadUserData() {
         if (!repo.isUserLoggedIn()) {
             Toast.makeText(this, "Vui lòng đăng nhập", Toast.LENGTH_SHORT).show();
@@ -101,7 +105,7 @@ public class ProfileActivity extends AppCompatActivity {
                     tvName.setText(user.getName());
                     tvEmail.setText(user.getEmail());
                     
-                    // Hide booking history for staff/admin
+                    // Ẩn lịch sử đặt lịch cho staff/admin (họ có màn hình riêng)
                     String role = user.getRole();
                     if (role != null && (role.equals("staff") || role.equals("admin"))) {
                         btnBookingHistory.setVisibility(View.GONE);
@@ -126,6 +130,11 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Hiển thị dialog đổi mật khẩu
+     * - Validate input (mật khẩu hiện tại, mật khẩu mới, xác nhận)
+     * - Gọi FirebaseRepo.changePassword() để đổi mật khẩu
+     */
     private void showChangePasswordDialog() {
         BottomSheetDialog dialog = new BottomSheetDialog(this);
         View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_change_password, null);
@@ -144,7 +153,7 @@ public class ProfileActivity extends AppCompatActivity {
             String newPassword = edtNewPassword.getText() != null ? edtNewPassword.getText().toString() : "";
             String confirmPassword = edtConfirmPassword.getText() != null ? edtConfirmPassword.getText().toString() : "";
 
-            // Validation
+            // Kiểm tra tính hợp lệ của input
             if (TextUtils.isEmpty(currentPassword)) {
                 edtCurrentPassword.setError("Vui lòng nhập mật khẩu hiện tại");
                 edtCurrentPassword.requestFocus();

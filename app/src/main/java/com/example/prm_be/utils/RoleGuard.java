@@ -13,7 +13,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 /**
  * Utility class để kiểm tra và điều hướng theo role
- * Đảm bảo chỉ user có role hợp lệ mới truy cập được màn hình tương ứng
+ * Chức năng:
+ * - Kiểm tra role của user trước khi vào màn hình
+ * - Điều hướng user đến màn hình phù hợp với role
+ * - Chặn user không có quyền truy cập màn hình
  */
 public class RoleGuard {
     private static final String TAG = "RoleGuard";
@@ -155,7 +158,8 @@ public class RoleGuard {
     }
 
     /**
-     * Kiểm tra xem user hiện tại có phải là user thường không (chặn staff/admin)
+     * Kiểm tra user có phải là user thường không (chặn staff/admin)
+     * Dùng cho các màn hình chỉ dành cho khách hàng (HomeActivity, BookingActivity, ProfileActivity)
      * @param activity Activity cần check
      * @return true nếu là user thường, false nếu là staff/admin (sẽ redirect)
      */

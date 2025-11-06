@@ -28,7 +28,10 @@ import java.util.List;
 
 /**
  * SalonDetailActivity - Màn hình chi tiết salon
- * Hiện tại chỉ code UI, chưa có logic kết nối BE
+ * Chức năng:
+ * - Load thông tin salon từ Firebase
+ * - Hiển thị danh sách services và stylists của salon
+ * - Chuyển đến BookingActivity để đặt lịch
  */
 public class SalonDetailActivity extends AppCompatActivity {
 

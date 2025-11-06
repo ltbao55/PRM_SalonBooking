@@ -156,6 +156,12 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Điều hướng theo role của user sau khi đăng nhập thành công
+     * - admin -> AdminDashboardActivity (màn hình quản trị)
+     * - staff -> StaffHomeActivity (màn hình nhân viên)
+     * - user -> HomeActivity (màn hình khách hàng)
+     */
     private void navigateByRole(String role) {
         Class<?> destination;
         if ("admin".equalsIgnoreCase(role)) {
@@ -171,6 +177,11 @@ public class LoginActivity extends AppCompatActivity {
         finish();
     }
 
+    /**
+     * Lấy thông tin user từ Firestore và điều hướng
+     * - Kiểm tra status: nếu "disabled" thì chặn đăng nhập
+     * - Lấy role và điều hướng đến màn hình phù hợp
+     */
     private void fetchRoleAndNavigate(String uid) {
         repo.getUser(uid, new FirebaseRepo.FirebaseCallback<User>() {
             @Override
@@ -185,7 +196,7 @@ public class LoginActivity extends AppCompatActivity {
                     return;
                 }
                 
-                // Account active, tiếp tục đăng nhập
+                // Account active, tiếp tục đăng nhập - lấy role và điều hướng
                 String role = user.getRole() != null ? user.getRole() : "user";
                 navigateByRole(role);
             }
@@ -227,6 +238,10 @@ public class LoginActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * Thực hiện đăng nhập với email/password
+     * Sau khi đăng nhập thành công, lấy role và điều hướng
+     */
     private void performLogin(String email, String password) {
         showLoading(true);
 
@@ -235,6 +250,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onSuccess(FirebaseUser user) {
                 showLoading(false);
                 Log.d("LoginActivity", "Login successful: " + user.getEmail());
+                // Lấy role và điều hướng đến màn hình phù hợp
                 fetchRoleAndNavigate(user.getUid());
             }
 

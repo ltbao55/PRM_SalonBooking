@@ -109,7 +109,10 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     /**
-     * Navigate sau khi delay
+     * Điều hướng sau 2.5 giây
+     * Kiểm tra đăng nhập:
+     * - Đã đăng nhập -> HomeActivity (màn hình chính)
+     * - Chưa đăng nhập -> LoginActivity (màn hình đăng nhập)
      */
     private void navigateAfterDelay() {
         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
@@ -117,10 +120,10 @@ public class SplashActivity extends AppCompatActivity {
             public void run() {
                 FirebaseRepo repo = FirebaseRepo.getInstance();
                 if (repo.isUserLoggedIn()) {
-                    // Navigate to Home
+                    // Đã đăng nhập -> Màn hình chính
                     startActivity(new Intent(SplashActivity.this, com.example.prm_be.ui.discovery.HomeActivity.class));
                 } else {
-                    // Navigate to Login
+                    // Chưa đăng nhập -> Màn hình đăng nhập
                     startActivity(new Intent(SplashActivity.this, LoginActivity.class));
                 }
                 finish();

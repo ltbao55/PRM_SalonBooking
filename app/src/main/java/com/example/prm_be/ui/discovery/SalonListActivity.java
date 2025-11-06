@@ -23,7 +23,10 @@ import java.util.List;
 
 /**
  * SalonListActivity - Màn hình danh sách salon với tìm kiếm
- * Hiện tại chỉ code UI, chưa có logic kết nối BE
+ * Chức năng:
+ * - Load danh sách salon từ Firebase
+ * - Tìm kiếm salon theo tên/địa chỉ (filter local)
+ * - Click salon để xem chi tiết
  */
 public class SalonListActivity extends AppCompatActivity {
 
@@ -96,25 +99,25 @@ public class SalonListActivity extends AppCompatActivity {
         edtSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                // Chưa có logic search, sẽ implement sau khi có BE
+                // Không cần xử lý
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                // Filter salon list based on search query
+                // Filter salon list theo query tìm kiếm
                 filterSalons(s.toString());
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-                // Chưa có logic search, sẽ implement sau khi có BE
+                // Không cần xử lý
             }
         });
     }
 
     /**
-     * Filter salon list based on search query
-     * Hiện tại chỉ filter local, sẽ kết nối với BE sau
+     * Lọc danh sách salon theo query tìm kiếm
+     * Filter local theo tên và địa chỉ salon
      */
     private void filterSalons(String query) {
         if (query == null || query.trim().isEmpty()) {
@@ -137,8 +140,8 @@ public class SalonListActivity extends AppCompatActivity {
     }
 
     /**
-     * Load mock data để preview UI
-     * Sẽ được thay thế bằng FirebaseRepo.getAllSalons() sau khi có BE
+     * Load danh sách salon từ Firebase
+     * Nếu không có dữ liệu thì dùng demo data để preview UI
      */
     private void loadFromFirebase() {
         repo.getAllSalons(new FirebaseRepo.FirebaseCallback<List<Salon>>() {
