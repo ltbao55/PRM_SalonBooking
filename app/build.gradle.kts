@@ -3,6 +3,16 @@ plugins {
     alias(libs.plugins.google.services)
 }
 
+import java.util.Properties
+import java.io.FileInputStream
+
+// Load keystore properties
+val keystorePropertiesFile = rootProject.file("app/key.properties")
+val keystoreProperties = Properties()
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+}
+
 android {
     namespace = "com.example.prm_be"
     compileSdk = 36
@@ -17,6 +27,22 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        if (keystorePropertiesFile.exists()) {
+            create("release") {
+                val keyAliasProp = keystoreProperties["keyAlias"] as? String
+                val keyPasswordProp = keystoreProperties["keyPassword"] as? String
+                val storeFileProp = keystoreProperties["storeFile"] as? String
+                val storePasswordProp = keystoreProperties["storePassword"] as? String
+                
+                if (keyAliasProp != null) keyAlias = keyAliasProp
+                if (keyPasswordProp != null) keyPassword = keyPasswordProp
+                if (storeFileProp != null) storeFile = file(storeFileProp)
+                if (storePasswordProp != null) storePassword = storePasswordProp
+            }
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -24,6 +50,9 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            if (keystorePropertiesFile.exists()) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
     }
     compileOptions {

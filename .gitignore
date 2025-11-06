@@ -104,6 +104,7 @@ fastlane/test_output
 signing.properties
 keystore.properties
 app/keystore.properties
+app/key.properties
 
 # Env/secrets and keys
 .env
